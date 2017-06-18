@@ -1,0 +1,453 @@
+<style>
+/*
+ * 1. Use flex to allow portrait and vitals to vertically center with one another
+ * 2. Don't use flex for vital information as it will add a newline character after
+ *    every flex-item
+ *    @see https://stackoverflow.com/questions/27970957/flexbox-adding-newline-to-clipboard
+ * 3. In CJK languages the person name should not be bold because it makes the
+ *    characters harder to read.
+ * 4. Use table-cells instead of floats so we can make only the lifespan truncate
+ *    and not the id while still allowing triple click to select the id
+ * 5. Don't let the id truncate or wrap
+ * 6. Css trick to have a table column truncate text without using width or max-width
+ *    which would case the column to take up as much space as possible on the screen
+ *    @see http://stackoverflow.com/a/19757393/2124254
+ * 7. Given name and family name are only used in portrait orientation
+ * 8. Let the image grow to the size of the portrait container so the container can
+ *    be resized by external css
+ */
+fs-person {
+  display: flex; /* [1] */
+  width: 100%;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.fs-person__vitals {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+}
+
+.fs-person__sex {
+  position: absolute;
+  top: 7px;
+}
+
+.fs-person__sex[class*=fs-icon-medium] {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.fs-person__sex ~ .fs-person__name,
+.fs-person__sex ~ .fs-person__details {
+  padding-left: 20px;
+}
+
+.fs-person__sex[class*=fs-icon-medium] ~ .fs-person__name,
+.fs-person__sex[class*=fs-icon-medium] ~ .fs-person__details {
+  padding-left: 30px;
+}
+
+.fs-person__name {
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fs-person__given-name,
+.fs-person__family-name {
+  display: none; /* [7] */
+}
+
+.locale-zh .fs-person__name,
+.locale-ja .fs-person__name,
+.locale-ko .fs-person__name {
+  font-weight: normal; /* [3] */
+}
+
+.fs-person__details {
+  font-size: 12px;
+}
+
+.fs-person__lifeSpan,
+.fs-person__separator,
+.fs-person__id {
+  display: table-cell; /* [2,4] */
+}
+
+.fs-person__separator,
+.fs-person__id {
+  white-space: nowrap; /* [5] */
+}
+
+.fs-person__lifeSpan {
+  position: relative; /* [6] */
+}
+
+/* [6] */
+.fs-person__lifeSpan:after {
+  content: attr(data-lifespan);
+  display: inline-block;
+  height: 0;
+  overflow: hidden;
+}
+
+.fs-person__lifeSpan span {
+  position: absolute;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fs-person__portrait {
+  background-color: #f4f4f4;
+  background-size: 60%;
+  border: 4px solid #d9d9d9;
+  border-radius: 50%;
+  margin-right: 20px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.fs-person__image {
+  max-width: 100%; /* [8] */
+  border-radius: 50%;
+  position: relative;
+  z-index: 1;
+}
+
+
+
+
+
+/** INLINE **/
+/*
+ * 1. make the name shrink at a very low rate compared to the lifespan (magic number)
+ */
+fs-person[orientation="inline"] .fs-person__portrait {
+  display: none;
+}
+
+fs-person[orientation="inline"] .fs-person__vitals {
+  display: flex;
+}
+
+fs-person[orientation="inline"] .fs-person__name {
+  flex-shrink: 1; /* [1] */
+  margin-right: 30px;
+}
+
+fs-person[orientation="inline"] .fs-person__details {
+  padding-left: 0;
+  flex-shrink: 10000; /* [1] */
+}
+
+
+
+
+
+/** PORTRAIT **/
+/*
+ * 1. sinotypic names will still use the full name instead of the given-name and family-name
+ */
+fs-person[orientation="portrait"] {
+  display: block;
+  text-align: center;
+}
+
+fs-person[orientation="portrait"] .fs-person__portrait {
+  margin: 0 auto 10px;
+}
+
+/* [1] */
+fs-person[orientation="portrait"] .fs-person__sex,
+fs-person[orientation="portrait"] .fs-person__name:not(.fs-person--sinotypic) .fs-person__full-name {
+  display: none;
+}
+
+fs-person[orientation="portrait"] .fs-person__name:not(.fs-person--sinotypic) .fs-person__given-name,
+fs-person[orientation="portrait"] .fs-person__name:not(.fs-person--sinotypic) .fs-person__family-name {
+  display: block;
+  line-height: 1.5rem;
+}
+
+fs-person[orientation="portrait"] .fs-person__name,
+fs-person[orientation="portrait"] .fs-person__details {
+  padding-left: 0;
+}
+
+fs-person[orientation="portrait"] .fs-person__details {
+  margin-top: 5px;
+  display: inline-block;
+}
+
+
+
+
+
+/** DARK **/
+fs-person[theme="dark"] {
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale
+}
+
+fs-person[theme="dark"] .fs-person__portrait {
+  background-color: #57585a;
+  border-color: #8c8d8f;
+}
+
+fs-person[theme="dark"] .fs-person__details {
+  color: #ecebea;
+}
+
+
+
+
+
+/** HUSBAND/WIFE **/
+/*
+ * 1. use the sex element as the anchor for the connection line
+ * 2. allow connector to be seen due to overflow:hidden – 9px connector (width + border)
+ * 3. large number that would go outside the overflow of the person
+ */
+fs-person[relation="husband"],
+fs-person[relation="wife"] {
+  /* [2] */
+  margin-left: -9px;
+  padding-left: 9px;
+  overflow: hidden;
+}
+
+/* [1] */
+fs-person[relation="husband"] .fs-person__sex:before,
+fs-person[relation="wife"] .fs-person__sex:before  {
+  content: '';
+  width: 8px;
+  height: 150px; /* [3] */
+  border: 1px solid currentcolor;
+  border-right: 0;
+  position: absolute;
+  right: 100%
+}
+
+fs-person[relation="husband"] .fs-person__sex:before {
+  border-bottom: 0;
+  top: 50%;
+}
+
+fs-person[relation="wife"] .fs-person__sex:before {
+  border-top: 0;
+  bottom: 50%;
+}
+</style>
+
+<!-- 1. Add the sex of the person as an element in the DOM so screen readers can
+        can hear it when navigating line by line
+     2. The visually hidden, zero-width space element is used to prevent the id from
+        adding a newline character at the end of the clipboard when copied (cannot
+        be display:none). Without the aria-hidden attribute, screen readers would
+        read the character -->
+<template id="fs-person-template">
+
+  <div class="fs-person__portrait fs-icon">
+    <img class="fs-person__image" alt="" src="" data-test="portrait">
+  </div>
+  <div class="fs-person__vitals">
+    <div class="fs-person__sex fs-icon"><span class="visually-hidden"></span></div>
+    <div class="fs-person__name">
+      <span class="fs-person__given-name" data-test="given-name"></span>
+      <span class="fs-person__family-name" data-test="family-name"></span>
+      <span class="fs-person__full-name" data-test="full-name"></span>
+    </div>
+    <div class="fs-person__details">
+      <span class="fs-person__lifeSpan" data-test="lifeSpan"><span></span></span>
+      <span class="fs-person__separator">&nbsp;•&nbsp;</span>
+      <span class="fs-person__id" data-test="pid"></span>
+      <span class="visually-hidden" aria-hidden="true">​&#8203;</span>
+    </div>
+  </div>
+
+</template>
+
+<script>
+(function() {
+  var doc = (document._currentScript || document.currentScript).ownerDocument;
+  var template = doc.querySelector('#fs-person-template');
+
+  var validIconSize = ['medium', 'small'];
+  var fsPersonProto = Object.create(HTMLElement.prototype);
+
+  fsPersonProto.createdCallback = function () {
+
+    // accept child name element wrapper
+    this.nameSlot = this.querySelector('[slot="name"]');
+  },
+
+  fsPersonProto.attributeChangedCallback = function(attr, oldValue, newValue) {
+
+    // accept person json attribute value
+    if (attr === 'person') {
+      try {
+        this.person = JSON.parse(newValue);
+      }
+      catch (e) {
+        // ?
+      }
+    }
+  };
+
+  Object.defineProperties(fsPersonProto, {
+
+    /**
+     * Person object with the following properties:
+     *
+     *   __familyName__ - Family name of the person
+     *   __givenName__ - Given name of the person
+     *   __id__ - ID of the person
+     *   __lifespan__ - Lifespan of the person (will be rendered as is)
+     *   __name__ - Full name of the person
+     *   __nameSystem__ - 'sinotypic' or 'eurotypic'
+     *   __portraitUrl__ - URL of the person's portrait
+     *   __sex__ - Sex of the person (lowercase or uppercase)
+     *
+     * Can also be passed in through the `person` property.
+     *
+     * @type {Object}
+     */
+    person: {
+      get: function() {
+        return this._person;
+      },
+      set: function(value) {
+        this._person = Object.assign({
+          sex: 'unknown',  // default sex is unknown
+          name: '[Unknown Name]'
+        }, value);
+        this._render();
+      }
+    }
+  });
+
+  fsPersonProto._render = function() {
+    var clone = document.importNode(template.content, true);
+    var hideSeparator = false;  // separator should be hidden if lifespan or id is hidden
+    var sex = this.person.sex.toLowerCase();
+
+    // portrait
+    if (this.hasAttribute('portrait') || this.getAttribute('orientation') === 'portrait') {
+      clone.querySelector('.fs-person__portrait').classList.add('fs-icon-large-' + sex);
+
+      // portrait url has content
+      if (this.person.portraitUrl) {
+        clone.querySelector('.fs-person__image').setAttribute('src', this.person.portraitUrl);
+      }
+      else {
+        clone.querySelector('.fs-person__image').remove();
+      }
+    }
+    else {
+      clone.querySelector('.fs-person__portrait').remove();
+    }
+
+    // sex
+    if (this.person.sex && !this.hasAttribute('no-sex')) {
+      var iconSize = 'small';
+
+      // never allow a medium sex icon if the portrait is showing or when inline
+      if (this.hasAttribute('portrait') || this.getAttribute('orientation') === 'inline') {
+        iconSize = 'small';
+      }
+      else if (validIconSize.indexOf(this.getAttribute('icon-size')) !== -1) {
+        iconSize = this.getAttribute('icon-size');
+      }
+
+      clone.querySelector('.fs-person__sex').classList.add('fs-icon-' + iconSize + '-' + sex);
+      clone.querySelector('.fs-person__sex').querySelector('span').textContent = sex;
+    }
+    else {
+      clone.querySelector('.fs-person__sex').remove();
+    }
+
+    // name system
+    if (this.person.nameSystem) {
+      clone.querySelector('.fs-person__name').classList.add('fs-person--' + this.person.nameSystem);
+    }
+
+    // full name
+    if (this.person.name) {
+      var name = clone.querySelector('.fs-person__full-name');
+
+      // wrap the name in the slot element
+      if (this.nameSlot) {
+        this.nameSlot.textContent = this.person.name;
+        name.appendChild(this.nameSlot);
+      }
+      else {
+        name.textContent = this.person.name;
+      }
+
+      // fire an event when the name is clicked on so they can cancel it to
+      // open a person card
+      if (name.querySelector('a')) {
+        name.addEventListener('click', function(e) {
+          var event = new CustomEvent('fs-person-click', {bubbles: true});
+          this.dispatchEvent(event);
+        });
+      }
+    }
+    else {
+      clone.querySelector('.fs-person__full-name').remove();
+    }
+
+    // family name
+    if (this.person.familyName) {
+      clone.querySelector('.fs-person__family-name').textContent = this.person.familyName;
+    }
+    else {
+      clone.querySelector('.fs-person__family-name').remove();
+    }
+
+    // given name
+    if (this.person.givenName) {
+      clone.querySelector('.fs-person__given-name').textContent = this.person.givenName;
+    }
+    else {
+      clone.querySelector('.fs-person__given-name').remove();
+    }
+
+    // lifespan
+    if (this.person.lifespan && !this.hasAttribute('no-lifespan')) {
+      clone.querySelector('.fs-person__lifeSpan span').textContent = this.person.lifespan;
+
+      // set attribute for css hack to truncate lifespan
+      clone.querySelector('.fs-person__lifeSpan').setAttribute('data-lifespan', this.person.lifespan);
+    }
+    else {
+      clone.querySelector('.fs-person__lifeSpan').remove();
+      hideSeparator = true;
+    }
+
+    // id
+    if (this.person.id && !this.hasAttribute('no-id')) {
+      clone.querySelector('.fs-person__id').textContent = this.person.id;
+    }
+    else {
+      clone.querySelector('.fs-person__id').remove();
+      hideSeparator = true;
+    }
+
+    // separator
+    if (hideSeparator) {
+      clone.querySelector('.fs-person__separator').remove();
+    }
+
+    this.appendChild(clone);
+  };
+
+  document.registerElement('fs-person', {prototype: fsPersonProto});
+})();
+</script>

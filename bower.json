@@ -1,0 +1,28 @@
+{
+  "name": "fs-person",
+  "description": "A FamilySearch shared web component element seed",
+  "version": "1.0.0",
+  "main": "fs-person.html",
+  "dependencies": {
+    "fs-styles": "fs-webdev/fs-styles#^3.1.1"
+  },
+  "devDependencies": {
+    "polymer": "Polymer/polymer#^1.4.0",
+    "fs-demo": "fs-webdev/fs-demo#master",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.2.5",
+    "iron-component-page": "PolymerElements/iron-component-page#^1.1.8",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.23",
+    "web-component-tester": "Polymer/web-component-tester#^5.0.0"
+  },
+  "ignore": [
+    ".*",
+    "bin/",
+    "bin/*",
+    "test/",
+    "test/*",
+    "wct.conf.json"
+  ],
+  "resolutions": {
+    "fetch": "~2.0.3"
+  }
+}

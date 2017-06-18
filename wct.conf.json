@@ -1,0 +1,29 @@
+{
+  "plugins": {
+    "local": {
+      "browsers": [ "chrome" ]
+    },
+    "sauce": {
+      "browsers": [
+        {
+          "browserName":  "internet explorer",
+          "platform":     "Windows 8.1",
+          "version":      "11"
+        },
+        {
+          "browserName":  "safari",
+          "platform":     "OS X 10.11",
+          "version":      "10"
+        },
+        {
+          "browserName":  "chrome",
+          "platform":     "Linux"
+        },
+        {
+          "browserName":  "firefox",
+          "platform":     "Linux"
+        }
+      ]
+    }
+  }
+}

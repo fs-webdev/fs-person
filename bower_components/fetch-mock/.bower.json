@@ -1,0 +1,12 @@
+{
+  "name": "fetch-mock",
+  "_cacheHeaders": {
+    "ETag": "W/\"424e-157873f0220\"",
+    "Content-Type": "application/javascript"
+  },
+  "_release": "e-tag:W/\"424e-15",
+  "main": "index.js",
+  "_source": "https://unpkg.com/fetch-mock@5.5.0/es5/client-browserified.js",
+  "_target": "*",
+  "_originalSource": "https://unpkg.com/fetch-mock@5.5.0/es5/client-browserified.js"
+}

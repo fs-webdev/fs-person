@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <link rel="stylesheet" href="../../fs-styles/dist/familysearch-styles.css">
+
+    <title>fs-person demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../promise-polyfill/Promise.js"></script>
+    <script src="../../fetch/fetch.js"></script>
+
+    <script>
+      // Preconfig WCI18n Object (this works in tandem with fs-demo below)
+      // NOTE: You will need a similar config in your apps to work with WCI18n
+      window.WCI18n = {
+        language: sessionStorage.getItem('DEMO_LOCALE')
+      };
+    </script>
+
+    <link rel='import' href='../fs-person.html'>
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles"></style>
+    <style>
+      h2 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+      }
+      body,
+      body:not([style-scope]):not(.style-scope) {
+        font-family: 'Verdana', sans-serif;
+        font-size: 14px;
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Default Demo</h3>
+    <demo-snippet>
+      <template>
+        <fs-person></fs-person>
+      </template>
+    </demo-snippet>
+
+    <h3>Property Demo</h3>
+    <demo-snippet>
+      <template>
+        <fs-person icon-size="medium"></fs-person>
+        <fs-person portrait icon-size="medium"></fs-person>
+        <fs-person orientation="portrait"></fs-person>
+        <fs-person orientation="inline" icon-size="medium"></fs-person>
+        <fs-person orientation="inline" portrait></fs-person>
+
+        <div style="background: #333331; padding: 10px">
+        <fs-person theme="dark"></fs-person>
+        <fs-person theme="dark" portrait></fs-person>
+        </div>
+
+        <fs-person no-sex></fs-person>
+        <fs-person no-lifespan></fs-person>
+        <fs-person no-id></fs-person>
+      </template>
+    </demo-snippet>
+
+    <h3>Name Slot</h3>
+    <demo-snippet>
+      <template>
+        <fs-person>
+          <a href="javascript:void(0);" slot="name"></a>
+        </fs-person>
+
+        <fs-person>
+          <h3 slot="name"></h3>
+        </fs-person>
+      </template>
+    </demo-snippet>
+
+    <h3>Couple</h3>
+    <demo-snippet>
+      <template>
+        <fs-person relation="husband"></fs-person>
+        <fs-person relation="wife"></fs-person>
+      </template>
+    </demo-snippet>
+
+    <script>
+    setTimeout(function() {
+      person = {
+        name: 'John Doe',
+        givenName: 'John',
+        familyName: 'Doe',
+        sex: 'MALE',
+        lifespan: 'December 24, 1990 - May 24, 1990',
+        id: 'XKCD-123',
+        nameSystem: 'sinotypic',
+        portraitUrl: 'https://familysearch.org/patron/v2/TH-300-47742-126-5/thumb200s.jpg?ctx=ArtCtxPublic&_=1497301379235'
+      }
+
+      person2 = {
+        name: 'Jane Doe',
+        givenName: 'Jane',
+        familyName: 'Doe',
+        sex: 'FEMALE',
+        lifespan: 'December 24, 1990 - May 24, 1990',
+        id: 'XKCD-123',
+        nameSystem: 'sinotypic'
+      };
+
+      var persons = document.querySelectorAll('fs-person:not([relation="wife"])');
+      for (var i = 0; i < persons.length; i++) {
+        persons[i].person = person;
+      }
+
+      document.querySelector('fs-person[relation="wife"]').person = person2;
+    }, 100);
+    </script>
+  </body>
+</html>

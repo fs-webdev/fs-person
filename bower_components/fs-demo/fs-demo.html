@@ -1,0 +1,361 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../wc-i18n/wc-i18n.html">
+<link rel="import" href="../oak-ajax-behavior/oak-ajax-behavior.html">
+<link rel="import" href="../oak-i18n-behavior/oak-i18n-behavior.html">
+<link rel="import" href="../fs-cache/fs-cache.html">
+<link rel="stylesheet" href="../fs-styles/dist/familysearch-styles.css">
+
+<!--
+`fs-demo`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="fs-demo">
+  <template>
+    <style is="custom-style">
+      :host {
+        display: block;
+        background: #f0f0f0;
+        border: 1px solid #ddd;
+        padding: 10px;
+        --blue: #64B5F6;
+        --red: #F44336;
+        --green: #66BB6A;
+      }
+      a,
+      a:hover {
+        display: block;
+        text-decoration: none;
+      }
+      paper-button {
+        background: #3073dd;
+        color: #fff;
+      }
+      paper-button:hover {
+        background: #3882f8;
+      }
+      .items {
+        display: flex;
+        flex-flow: row;
+      }
+      .sign-in-wrapper {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      .item {
+        display: flex;
+        flex-flow: column;
+        padding: 0 5px;
+      }
+      .session-id-wrapper {
+        flex: 2;
+      }
+      .session-id {
+        font-size: 8px;
+      }
+      h3 {
+        margin: 0;
+        padding: 0;
+      }
+      .clear {
+        background-color: var(--red);
+      }
+      .clear:hover {
+        background: #e64034;
+      }
+      [hidden] {
+        display: none;
+      }
+      .invalid-session,
+      .env {
+        text-transform: uppercase;
+        margin-left: 5px;
+        font-size: 12px;
+        background: red;
+        color: #fff;
+        border-radius: 3px;
+        padding: 0 5px;
+      }
+      .env.prod {
+        background-color: var(--red);
+      }
+      .env.beta {
+        background-color: var(--blue);
+
+      }
+      .env.int {
+        background-color: var(--green);
+      }
+      .invalid-session {
+        background: #666;
+        animation-name: growShrink;
+        animation-duration: 2s;
+        animation-iteration-count: infinite;
+      }
+      .sign-in-buttons,
+      .demo-header {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+      }
+      /* The animation code */
+      @keyframes growShrink {
+          0%   {background-color: #666;}
+          50%  {background-color: var(--red);}
+          100% {background-color: #666;}
+      }
+    </style>
+    <div class="sign-in-wrapper">
+      <header class="demo-header">
+        <h3>Demo Config</h3>
+        <div>
+          <div class$="[[_envClass(env)]]">[[env]]</div>
+        </div>
+      </header>
+      <div class="sign-in-buttons">
+        <p hidden$="[[!badSession]]" class="invalid-session">INVALID SESSION =></p>
+        <a class="sign-in" href$="[[_computeLoginPath()]]" hidden$="[[signedIn]]" target="_top">
+          <paper-button>Sign In</paper-button>
+        </a>
+        <a href="[[_computeLogoutPath()]]" hidden$="[[!signedIn]]" target="_top">
+          <paper-button class="clear">Clear session id</paper-button>
+        </a>
+        <paper-button class="clear" on-tap="_clearCache">Clear Cache</paper-button>
+      </div>
+    </div>
+    <section class="items">
+      <div class="item">
+        <label for="pid">PID</label>
+        <input type="text" name="pid" value="{{pid::input}}">
+        <select name="pidList" value="{{pid::change}}">
+          <template is="dom-repeat" items="[[_getPids(env, pids)]]">
+            <option value="[[item.id]]">[[item.label]]</option>
+          </template>
+        </select>
+      </div>
+      <!-- <div class="item">
+        <paper-checkbox checked="{{isHighConfMember}}">isHighConfMember</paper-checkbox>
+      </div> -->
+
+      <div class="item">
+        <label for="locale">locale</label>
+        <select class="" name="locale" value="{{lang::change}}">
+          <option value="de">German</option>
+          <option value="en" selected>English</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="it">Italian</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="ja">Japanese</option>
+          <option value="ko">Korean</option>
+          <option value="zh">Chinese</option>
+        </select>
+      </div>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'fs-demo',
+      properties: {
+        pid: {
+          type: String,
+          reflectToAttribute: true,
+          notify: true,
+          value: sessionStorage['DEMO_PID'] || 'KWN5-3PH',
+          observer: '_savePID'
+        },
+        ajaxBase: {
+          type: String
+        },
+        standalone: {
+          type: Boolean,
+          value: function(){
+            return (window.top.BASE_URL === undefined);
+          }
+        },
+        env: {
+          type: String,
+          reflectToAttribute: true,
+          notify: true,
+          observer: '_envObserver'
+        },
+        isHighConfMember: {
+          type: Boolean,
+          value: function(){
+            var storage = sessionStorage['DEMO_IS_HIGH_CONF_MEMBER'] || false;
+
+            if(storage){
+              try {
+                storage = JSON.parse(storage);
+              }
+              catch (e){}
+            }
+            window.FS = window.FS || {
+              User: {
+                profile: {
+                  isHighConfMember: storage
+                }
+              }
+            }
+            return storage;
+          },
+          observer: "_saveIsHighConfMember"
+        },
+        badSession: {
+          type: Boolean,
+          value: false
+        },
+        sessionId: {
+          type: String,
+          observer: '_setSignedIn'
+        },
+        signedIn: {
+          type: Boolean,
+          value: false
+        },
+        classicReference: {
+          type: String,
+          value: '',
+          reflectToAttribute: true,
+          notify: true
+        },
+        lang: {
+          type: String,
+          observer: '_setLanguage'
+        },
+        pids: {
+          type: Object,
+          value: {
+            prod: [
+              {id: "KWN5-3PH", label: "Hugh Sidley Gowans"},
+              {id: "KWC1-867", label: "Marion Graf"},
+              {id: "KWCY-WR6", label: "Josephine Tobler"},
+              {id: "KFL3-Z3N", label: "Jeanne de Valois - IOUS"},
+              {id: "XXXX-XXX", label: "Invalid PID"}
+            ],
+            beta: [
+              {id: "KWN5-3PH", label: "Hugh Sidley Gowans"},
+              {id: "KWC1-867", label: "Marion Graf"},
+              {id: "KWCY-WR6", label: "Josephine Tobler"},
+              {id: "KFL3-Z3N", label: "Jeanne de Valois - IOUS"},
+              {id: "L2QD-VTY", label: "Deleted Person"},
+              {id: "L56M-Q5B", label: "Unstandardized"},
+              {id: "L56M-7KQ", label: "Standardized"},
+              {id: "XXXX-XXX", label: "Invalid PID"}
+            ],
+            int: [
+              {id: "L5ZR-7NG", label: "Joseph Smith Jr."},
+              {id: "L5C2-RMQ", label: "Long Name"},
+              {id: "L581-3TL", label: "Deleted Person"},
+              {id: "XXXX-XXX", label: "Invalid PID"}
+            ]
+          }
+        }
+      },
+      behaviors: [
+        OakAJAXBehavior,
+        OakI18nBehavior
+      ],
+      observers: ['_checkSession(sessionId)'],
+      ready: function(){
+        var origin = window.location.origin;
+        var env;
+        var that = this;
+        if(origin.indexOf('familysearch.org') !== -1){
+          if(origin.indexOf('int') !== -1){
+            env = 'int';
+          } else if(origin.indexOf('beta') !== -1) {
+            env = 'beta';
+          } else {
+            env = 'prod';
+          }
+          this.set('env',env);
+        } else {
+          fetch('/env')
+          .then(function(res){
+            return res.json()
+          })
+          .then(function(data){
+            that.set('env',data.env);
+          });
+        }
+      },
+      _envClass: function(env){
+        return 'env '+env;
+      },
+      _checkSession: function(sessionId){
+        if(!sessionId){
+          return;
+        }
+        var that = this;
+        fetch('/cis-public-api/v4/session/'+sessionId,{
+          credentials: 'include',
+          headers: {'accept': 'application/json'}
+        })
+        .then(function(res){
+          if(res.status !== 200){
+            that.set('badSession', true);
+          }
+        });
+      },
+      _envObserver: function(env){
+        if(env === 'int'){
+          this.set('classicReference', '_p_fs-ft_ftint');
+        } else if(env === 'beta'){
+          this.set('classicReference', '_p_fs-ft_production-staging-2');
+        } else if(env === 'prod'){
+          this.set('classicReference', '_p_fs-ft_production-primary');
+        }
+        sessionStorage.setItem('DEMO_ENV', env);
+      },
+      _getPids: function(env, pids){
+        return pids[env];
+      },
+      _setSignedIn: function(sessionId){
+        if(sessionId){
+          this.set('signedIn', true);
+        }
+      },
+      _clearCache: function(){
+        FS.cache.clearAll();
+      },
+      _computeLoginPath: function(){
+        return '/auth/familysearch/login?returnUrl='+encodeURI(window.top.location.href);
+      },
+      _computeLogoutPath: function(){
+        return '/auth/logout?returnUrl='+encodeURI(window.top.location.href);
+      },
+      _savePID: function(pid){
+        sessionStorage.setItem('DEMO_PID', pid);
+      },
+      _saveIsHighConfMember: function(isHighConfMember){
+        sessionStorage.setItem('DEMO_IS_HIGH_CONF_MEMBER', isHighConfMember);
+      },
+      _setLanguage: function(lang, prevLang){
+        WCI18n.setLanguage(lang);
+        function createCookie(name,value,days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days*24*60*60*1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + value + expires + "; path=/";
+        }
+        createCookie('fslanguage',lang, 30);
+
+        // set a locale class on the documentElement to match familysearch.org and apply
+        // CJK font stack from the style guide
+        document.documentElement.classList.remove('locale-' + prevLang);
+        document.documentElement.classList.add('locale-' + lang);
+      }
+    });
+  </script>
+</dom-module>

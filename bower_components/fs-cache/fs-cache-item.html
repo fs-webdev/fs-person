@@ -1,0 +1,106 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+# fs-cache-item
+
+This element creates a cache instance of localforage and exposes that cache through the `cache` attribute.
+
+### Basic Example
+
+    <fs-cache-item store-name="demo" cache="{{demoCache}}" error="[[errorObj]]"></fs-cache-item>
+
+### Session Storage
+
+    <fs-cache-item store-name="demo" type="session" lifetime="day" cache="{{sessionDemoCache}}" error="[[errorObj]]"></fs-cache-item>
+
+### Local Storage
+
+    <fs-cache-item store-name="demo" type="local" lifetime="60000" cache="{{localDemoCache}}" error="[[errorObj]]"></fs-cache-item>
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="fs-cache-item">
+
+  <script>
+    Polymer({
+      is: 'fs-cache-item',
+      properties: {
+        /**
+         * key of the stored item
+         * @type {String}
+         */
+        key: {
+          type: String
+        },
+        /**
+         * Exposes the cache value.
+         * @type {Object}
+         */
+        value: {
+          type: Object,
+          notify: true
+        },
+        /**
+         * localforage cache instance
+         * @type {Object}
+         */
+        cache: {
+          type: Object
+        },
+        /**
+         * Whether to store encrypted value
+         * @type {Boolean}
+         */
+        encrypted: {
+          type: Boolean
+        },
+        /**
+         * Last error that happened
+         * @type {Object}
+         */
+        error: {
+          type: Object,
+          notify: true
+        },
+      },
+      observers: [
+        '_keyObserver(key, cache)',
+        '_valueObserver(key, cache, value)'
+      ],
+      _keyObserver: function(key, cache){
+        var that = this;
+
+        if(!key || !cache){
+          return;
+        }
+        if(this.value === undefined){
+          var get = (this.encrypted) ? 'getEncrypted' : 'getItem';
+          cache[get](key)
+            .then(function(data){
+              that.value = data;
+            })
+            .catch(function(err){
+              that.error = err;
+            });
+        }
+      },
+      _valueObserver: function(key, cache, value){
+        var that = this;
+
+        if(!key || !cache || value === undefined){
+          return;
+        }
+        this.debounce('setItem',function(){
+          var set = (that.encrypted) ? 'setEncrypted' : 'setItem';
+          cache[set](key, value)
+            .catch(function(err){
+              that.error = err;
+            });
+        }, 300);
+
+      }
+    });
+  </script>
+</dom-module>
