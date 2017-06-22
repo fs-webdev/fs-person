@@ -8,7 +8,7 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
@@ -16,6 +16,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../webcomponentsjs/webcomponents.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
     <script src="./axe.min.js" ></script>
+    <link rel="stylesheet" href="../../fs-styles/dist/familysearch-styles.css">
+
 
     <!-- Step 1: import the element to test -->
     <link rel="import" href="../fs-person.html">
@@ -34,12 +36,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <fs-person>
           <a href="#" slot="name"></a>
         </fs-person>
-      </template>
-    </test-fixture>
-
-    <test-fixture id="fs-person-fixture-a11y">
-      <template>
-        <fs-person portrait person='{"name":"John Doe","givenName":"John","familyName":"Doe","sex":"MALE","lifespan":"1900–2000","id":"XKCD-123","nameSystem":"eruotipic","portraitUrl":"https://randomuser.me/api/portraits/men/15.jpg"}'></fs-person>
       </template>
     </test-fixture>
 
@@ -392,8 +388,44 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
 
-        // finish off with an a11y test
-        a11ySuite('fs-person-fixture-a11y');
+        describe('a11y', function() {
+
+          it('should pass accessibility guidelines', function(done) {
+            el.setAttribute('portrait', '');
+
+            setPerson();
+
+            axe.run(function (err, results) {
+              if (err) return done(err);
+
+              if (results.violations.length || results.incomplete.length) {
+                var errMsg = '';
+
+                results.violations.forEach(function(violation) {
+                  errMsg += `\n\n${violation.help}:`;
+
+                  violation.nodes.forEach(function(node, index) {
+                    errMsg += `\n\t${index+1}: ${node.html}`;
+                  });
+                });
+
+                results.incomplete.forEach(function(incomplete) {
+                  errMsg += `\n\n${incomplete.help}:`;
+
+                  incomplete.nodes.forEach(function(node, index) {
+                    errMsg += `\n\t${index+1}: ${node.html}`;
+                  });
+                });
+
+                return done(new Error(errMsg+'\n'));
+              }
+
+              done();
+            });
+
+          });
+
+        });
 
       });
     </script>

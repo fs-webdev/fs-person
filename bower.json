@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "main": "fs-person.html",
   "dependencies": {
-    "fs-styles": "fs-webdev/fs-styles#^3.1.1"
+    "fs-styles": "fs-webdev/fs-styles#^3.x.x"
   },
   "devDependencies": {
     "polymer": "Polymer/polymer#^1.4.0",
