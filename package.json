@@ -1,0 +1,29 @@
+{
+  "name": "fs-person",
+  "version": "1.0.0",
+  "description": "## Intro",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fs-webdev/fs-person.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/fs-webdev/fs-person/issues"
+  },
+  "homepage": "https://github.com/fs-webdev/fs-person#readme",
+  "devDependencies": {
+    "glob": "^7.1.2",
+    "gulp": "^3.9.1",
+    "pre-commit": "^1.2.2"
+  },
+  "scripts": {
+    "test": "wct",
+    "buildDist": "gulp build && wct && git add ."
+  },
+  "pre-commit": [
+    "buildDist"
+  ]
+}

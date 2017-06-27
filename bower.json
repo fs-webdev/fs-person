@@ -4,15 +4,13 @@
   "version": "1.0.0",
   "main": "fs-person.html",
   "dependencies": {
-    "fs-styles": "fs-webdev/fs-styles#^3.x.x"
+    "fs-styles": "fs-webdev/fs-styles#^3.x.x",
+    "fs-element-i18n": "https://github.com/fs-webdev/fs-element-i18n.git"
   },
   "devDependencies": {
-    "polymer": "Polymer/polymer#^1.4.0",
-    "fs-demo": "fs-webdev/fs-demo#master",
-    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.2.5",
-    "iron-component-page": "PolymerElements/iron-component-page#^1.1.8",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.23",
-    "web-component-tester": "Polymer/web-component-tester#^5.0.0"
+    "web-component-tester": "Polymer/web-component-tester#^5.0.0",
+    "axe.min": "https://unpkg.com/axe-core/axe.min.js"
   },
   "ignore": [
     ".*",
@@ -21,8 +19,5 @@
     "test/",
     "test/*",
     "wct.conf.json"
-  ],
-  "resolutions": {
-    "fetch": "~2.0.3"
-  }
+  ]
 }
