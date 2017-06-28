@@ -417,6 +417,11 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
       sexEl.remove();
     }
 
+    // name lang attribute so screen readers know how to read the name
+    if (this.person.lang && this.person.lang !== fsCore.simpleLocale) {
+      nameEl.setAttribute('lang', this.person.lang);
+    }
+
     // name system
     if (this.person.nameSystem) {
       nameEl.classList.add('fs-person__name--' + this.person.nameSystem);

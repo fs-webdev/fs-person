@@ -143,6 +143,22 @@
           expect(familyNameEl.textContent).to.equal('Provolone');
         });
 
+        it('should add the lang to the name if it doesn\'t match current language', function() {
+          person.lang = 'de';
+
+          setPerson();
+
+          expect(fullNameEl.parentElement.getAttribute('lang')).to.equal('de');
+        });
+
+        it('should not add the lang to the name if it matches current language', function() {
+          person.lang = 'en';
+
+          setPerson();
+
+          expect(fullNameEl.parentElement.hasAttribute('lang')).to.be.false;
+        });
+
         it('should remove the lifespan and separator if not passed in', function() {
           person.lifespan = null;
 

@@ -4,7 +4,7 @@ Standard display of a persons sex, name, lifespan, and id for FamilySearch.
 
 ## Installation
 
-$ bower install --save https://github.com/fs-webdev/fs-person.git
+$ bower install --save fs-webdev/fs-person
 
 ## Usage
 
@@ -29,6 +29,7 @@ el.person = {
 
 All properties are optional. Properties not passed in will not be displayed.
 
+* `lang` - Language of the name. Passing this attribute allows screen readers to change the language they read the name as.
 * `name` - Full name of the person. Defaults to `[Unknown Name]`.
 * `givenName` - Given name of the person. Defaults to `[Unknown Name]`.
 * `familyName` - Family name of the person.
