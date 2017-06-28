@@ -1,4 +1,4 @@
-<link rel="import" href="../fs-element-i18n/fs-element-i18n.html">
+<link rel="import" href="../fs-core-element/fs-core-element.html">
 
 <style>
 /*
@@ -176,8 +176,8 @@ fs-person[orientation="portrait"] .fs-person__name:not(.fs-person__name--sinotyp
   line-height: 1.5rem;
 }
 
-fs-person[orientation="portrait"] .fs-person__name,
-fs-person[orientation="portrait"] .fs-person__details {
+fs-person[orientation="portrait"] .fs-person__vitals .fs-person__name,
+fs-person[orientation="portrait"] .fs-person__vitals .fs-person__details {
   padding-left: 0;
 }
 
@@ -190,19 +190,19 @@ fs-person[orientation="portrait"] .fs-person__details {
 
 
 
-/** DARK **/
-fs-person[theme="dark"] {
+/** THEME **/
+fs-person[theme="nightfall"] {
   color: #fff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale
 }
 
-fs-person[theme="dark"] .fs-person__portrait {
+fs-person[theme="nightfall"] .fs-person__portrait {
   background-color: #57585a;
   border-color: #8c8d8f;
 }
 
-fs-person[theme="dark"] .fs-person__details {
+fs-person[theme="nightfall"] .fs-person__details {
   color: #ecebea;
 }
 
@@ -281,36 +281,12 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
 (function() {
   var doc = (document._currentScript || document.currentScript).ownerDocument;
   var template = doc.querySelector('#fs-person-template');
-  var i18nEl = document.createElement('fs-element-i18n');
-  i18nEl.translations = /* LANG CODE */;
+  var fsCore = document.createElement('fs-core-element');
+  fsCore.translations = /* LANG CODE */;
 
   var VALID_ICON_SIZES = ['medium', 'small'];
   var DEFAULT_ICON_SIZE = VALID_ICON_SIZES[0];
 
-  /**
-   * Safely decode html entities.
-   * @see https://stackoverflow.com/questions/1912501/unescape-html-entities-in-javascript/1912522#1912522
-   *
-   * @param {string} input
-   * @returns {string}
-   */
-  function htmlDecode(input) {
-    if (!input) return input;
-
-    var doc = new DOMParser().parseFromString(input, "text/html");
-    return doc.documentElement.textContent;
-  }
-
-  /**
-   * `<awesome-sauce>` injects a healthy dose of awesome into your page.
-   *
-   * In typical use, just slap some `<awesome-sauce>` at the top of your body:
-   *
-   *     <body>
-   *       <awesome-sauce></awesome-sauce>
-   *
-   * Wham! It's all awesome now!
-   */
   var proto = Object.create(HTMLElement.prototype);
 
   proto.createdCallback = function () {
@@ -333,23 +309,6 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
   };
 
   Object.defineProperties(proto, {
-
-    /**
-     * Person object with the following properties:
-     *
-     *   familyName - Family name of the person
-     *   givenName - Given name of the person
-     *   id - ID of the person
-     *   lifespan - Lifespan of the person (will be rendered as is)
-     *   name - Full name of the person
-     *   nameSystem - 'sinotypic' or 'eurotypic'
-     *   portraitUrl - URL of the person's portrait
-     *   sex - Sex of the person (lowercase or uppercase)
-     *
-     * Can also be passed in through the `person` property.
-     *
-     * @type {Object}
-     */
     person: {
       get: function() {
         return this._person;
@@ -361,14 +320,14 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
         this._person.sex = this._person.sex || 'unknown';
 
         // safely decode user generated values
-        this._person.name = htmlDecode(this._person.name);
-        this._person.familyName = htmlDecode(this._person.familyName);
-        this._person.givenName = htmlDecode(this._person.givenName);
+        this._person.name = fsCore.htmlDecode(this._person.name);
+        this._person.familyName = fsCore.htmlDecode(this._person.familyName);
+        this._person.givenName = fsCore.htmlDecode(this._person.givenName);
 
         // treat names with only whitespace characters as empty
         this._person.name = (this.person.name && this.person.name.trim() ?
           this.person.name.trim() :
-          i18nEl.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
+          fsCore.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
 
         this._person.familyName = (this.person.familyName && this.person.familyName.trim() ?
           this.person.familyName.trim()
@@ -377,7 +336,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
         // set the given name to unknown name for portrait orientation
         this._person.givenName = (this.person.givenName && this.person.givenName.trim() ?
           this.person.givenName.trim() :
-          i18nEl.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
+          fsCore.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
 
         this._render();
       }

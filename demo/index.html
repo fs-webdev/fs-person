@@ -4,92 +4,107 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
     <link rel="stylesheet" href="../../fs-styles/dist/familysearch-styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/prism/1.6.0/themes/prism.css">
 
     <title>fs-person demo</title>
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-
     <link rel='import' href='../fs-person.html'>
-    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-
-    <style is="custom-style" include="demo-pages-shared-styles"></style>
+    <link rel='import' href='../../fs-core-element/fs-core-element.html'>
     <style>
-      h2 {
-        margin-top: 20px;
-        margin-bottom: 10px;
-      }
-      body,
-      body:not([style-scope]):not(.style-scope) {
-        font-family: 'Verdana', sans-serif;
-        font-size: 14px;
-        font-size: 1rem;
-      }
+    .demo-snippet {
+      margin-bottom: 60px;
+    }
+
+    .demo {
+      border-bottom: 1px solid #ccc;
+      padding: 20px;
+    }
+
+    pre[class*="language-"] {
+      margin: 0;
+      padding: 20px;
+    }
+
+    .demo > h5:not(:first-child) {
+      margin-top: 40px;
+    }
+
+    .demo > h5 {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+    }
     </style>
   </head>
   <body>
-    <h3>Default Demo</h3>
-    <demo-snippet>
-      <template>
-        <fs-person></fs-person>
-      </template>
-    </demo-snippet>
+    <h3>Default Use</h3>
+    <div class="demo-snippet fs-card">
+      <div class="demo">
+<fs-person></fs-person>
+      </div>
+    </div>
 
-    <h3>Property Demo</h3>
-    <demo-snippet>
-      <template>
-        <fs-person icon-size="medium"></fs-person>
-        <fs-person portrait icon-size="medium"></fs-person>
-        <fs-person orientation="portrait"></fs-person>
-        <fs-person orientation="inline" icon-size="medium"></fs-person>
-        <fs-person orientation="inline" portrait></fs-person>
+    <h3>Attributes</h3>
+    <div class="demo-snippet fs-card">
+      <div class="demo">
+<h5>portrait</h5>
+<fs-person portrait></fs-person>
 
-        <div style="background: #333331; padding: 10px">
-        <fs-person theme="dark"></fs-person>
-        <fs-person theme="dark" portrait></fs-person>
-        </div>
+<h5>theme=nightfall</h5>
+<div style="background: #4d4d4a; padding: 5px;">
+  <fs-person theme="nightfall"></fs-person>
+</div>
 
-        <fs-person no-sex></fs-person>
-        <fs-person no-lifespan></fs-person>
-        <fs-person no-id></fs-person>
-      </template>
-    </demo-snippet>
+<h5>orientation=portrait</h5>
+<fs-person orientation="portrait" style="width: 300px"></fs-person>
+<h5>orientation=inline</h5>
+<fs-person orientation="inline"></fs-person>
 
-    <h3>Name Slot</h3>
-    <demo-snippet>
-      <template>
-        <fs-person>
-          <a href="javascript:void(0);" slot="name"></a>
-        </fs-person>
+<h5>icon-size=small</h5>
+<fs-person icon-size="small"></fs-person>
 
-        <fs-person>
-          <h3 slot="name"></h3>
-        </fs-person>
-      </template>
-    </demo-snippet>
+<h5>no-sex</h5>
+<fs-person no-sex></fs-person>
+<h5>no-lifespan</h5>
+<fs-person no-lifespan></fs-person>
+<h5>no-id</h5>
+<fs-person no-id></fs-person>
+      </div>
+    </div>
 
-    <h3>Couple</h3>
-    <demo-snippet>
-      <template>
-        <fs-person relation="spouse"></fs-person>
-        <fs-person relation="spouse"></fs-person>
-      </template>
-    </demo-snippet>
+    <h3>Slot Element</h3>
+    <p>You can pass a named slot as a child of <code class="language-markup">&lt;fs-person&gt;</code> and it will be used to wrap the persons name. This is useful if you need to make the persons name a link or a heading.</p>
+
+    <div class="demo-snippet fs-card">
+      <div class="demo">
+<h5>anchor element</h5>
+<fs-person>
+  <a href="javascript:void(0)" slot="name"></a>
+</fs-person>
+
+<h5>heading element</h5>
+<fs-person>
+  <h3 slot="name"></h3>
+</fs-person>
+      </div>
+    </div>
 
     <script>
-    setTimeout(function() {
-      person = {
-        name: '',
-        givenName: '',
-        familyName: '',
+    (function() {
+      var fsCore = document.createElement('fs-core-element');
+
+      var person = {
+        name: 'John Doe',
+        givenName: 'John',
+        familyName: 'Doe',
         sex: 'MALE',
         lifespan: 'December 24, 1990 - May 24, 1990',
         id: 'XKCD-123',
         nameSystem: 'eurotpyic',
-        portraitUrl: 'https://familysearch.org/patron/v2/TH-300-47742-126-5/thumb200s.jpg?ctx=ArtCtxPublic&_=1497301379235'
+        portraitUrl: 'https://randomuser.me/api/portraits/men/90.jpg'
       }
 
-      person2 = {
+      var person2 = {
         name: 'Jane Doe',
         givenName: 'Jane',
         familyName: 'Doe',
@@ -99,13 +114,33 @@
         nameSystem: 'sinotypic'
       };
 
+      // add automatic code output
+      Array.from(document.querySelectorAll('.demo')).forEach(function(demo) {
+        var code = fsCore.htmlEncode(demo.innerHTML.trim());
+
+        code += `\n\n&lt;script&gt;
+Array.from(document.querySelectorAll('fs-person')).forEach(function(el) {
+  el.person = ${JSON.stringify(person,null,4).replace('}','  }')};
+});
+&lt;/script&gt;`;
+
+        var preEL = document.createElement('pre');
+        var codeEl = document.createElement('code');
+        codeEl.classList.add('language-markup');
+        codeEl.innerHTML = code;
+
+        preEL.appendChild(codeEl);
+        demo.parentElement.appendChild(preEL);
+      });
+
       var persons = document.querySelectorAll('fs-person:not([relation="wife"])');
       for (var i = 0; i < persons.length; i++) {
         persons[i].person = person;
       }
 
       document.querySelector('fs-person[relation="wife"]').person = person2;
-    }, 100);
+    })();
     </script>
+    <script src="https://cdn.jsdelivr.net/prism/1.6.0/prism.js"></script>
   </body>
 </html>

@@ -152,28 +152,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           expect(familyNameEl.textContent).to.equal('Provolone');
         });
 
-        it('should not allow xss attacks through decoded names', function(done) {
-          person.name = `"<img src='dummy' onerror='window.badFn()'>`;
-
-          // this should not be reached otherwise we are vulnerable to xss
-          window.badFn = function() {
-            done(new Error('vulnerable to XSS!'));
-          }
-
-          // if after 500ms nothing happened (enough time for the network call
-          // to return 404), the test passes
-          setTimeout(done, 500);
-
-          el.person = person;
-
-          // typically decoding is done through using `innerHTML` of an element.
-          // however this is an XSS vulnerability. uncomment the code below and
-          // comment out the `el.person = person` to see this in action:
-          //
-          // var div = document.createElement('div');
-          // div.innerHTML = person.name;
-        });
-
         it('should remove the lifespan and separator if not passed in', function() {
           person.lifespan = null;
 

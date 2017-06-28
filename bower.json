@@ -10,7 +10,7 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "fs-styles": "fs-webdev/fs-styles#^3.x.x",
-    "fs-element-i18n": "https://github.com/fs-webdev/fs-element-i18n.git"
+    "fs-core-element": "https://github.com/fs-webdev/fs-core-element.git"
   },
   "devDependencies": {
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.23",
