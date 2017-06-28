@@ -50,6 +50,7 @@ The person object can be passed in though the `person` JavaScript property or th
 * `portrait` - Show the persons portrait. Will use `person.portraitUrl` as the src of the image, otherwise will default to displaying a portrait of the sex.
 * `theme` - Change the display theme. Values can be `normal` or `nightfall`. Defaults to `normal`.
 * `orientation` - Change the display orientation of the person. Values can be `landscape`, `portrait`, or `inline`. Defaults to `landscape`. `orientation=portrait` will automatically turn on the `portrait` attribute.
+* `icon-size` - Change the size of the sex icon. Values can be `small` or `medium`. Defaults to `medium`. If the attributes `portrait` or `orientation=inline` are set, this attribute will be ignored and the icon size will be set to `small`.
 * `no-sex` - Hide the persons sex.
 * `no-lifespan` - Hide the persons lifespan.
 * `no-id` - Hide the persons id.

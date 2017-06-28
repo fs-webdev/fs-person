@@ -1,6 +1,6 @@
 {
   "name": "fs-person",
-  "description": "A FamilySearch shared web component element seed",
+  "description": "Standard display of a persons sex, name, lifespan, and id for FamilySearch.",
   "version": "1.0.0",
   "main": "fs-person.html",
   "author": {
