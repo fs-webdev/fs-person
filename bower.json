@@ -3,6 +3,11 @@
   "description": "A FamilySearch shared web component element seed",
   "version": "1.0.0",
   "main": "fs-person.html",
+  "author": {
+    "name": "FamilySearch",
+    "url": "https://familysearch.org/"
+  },
+  "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "fs-styles": "fs-webdev/fs-styles#^3.x.x",
     "fs-element-i18n": "https://github.com/fs-webdev/fs-element-i18n.git"

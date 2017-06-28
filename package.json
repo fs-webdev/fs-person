@@ -9,7 +9,12 @@
     "type": "git",
     "url": "git+https://github.com/fs-webdev/fs-person.git"
   },
-  "author": "",
+  "author": {
+    "name": "FamilySearch",
+    "url": "https://familysearch.org/"
+  },
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "private": false,
   "bugs": {
     "url": "https://github.com/fs-webdev/fs-person/issues"
   },
