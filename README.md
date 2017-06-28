@@ -27,7 +27,7 @@ el.person = {
 
 ### Person Object
 
-All properties are optional. Any properties not passed in will not be displayed.
+All properties are optional. Properties not passed in will not be displayed.
 
 * `name` - Full name of the person. Defaults to `[Unknown Name]`.
 * `givenName` - Given name of the person. Defaults to `[Unknown Name]`.
@@ -48,7 +48,7 @@ The person object can be passed in though the `person` JavaScript property or th
 
 * `person` - The person object to display. Should be passed in via Polymer or `JSON.stringify`.
 * `portrait` - Show the persons portrait. Will use `person.portraitUrl` as the src of the image, otherwise will default to displaying a portrait of the sex.
-* `theme` - Change the display theme. Values can be `light` or `nightfall`. Defaults to `nightfall`.
+* `theme` - Change the display theme. Values can be `normal` or `nightfall`. Defaults to `normal`.
 * `orientation` - Change the display orientation of the person. Values can be `landscape`, `portrait`, or `inline`. Defaults to `landscape`. `orientation=portrait` will automatically turn on the `portrait` attribute.
 * `no-sex` - Hide the persons sex.
 * `no-lifespan` - Hide the persons lifespan.
