@@ -32,4 +32,8 @@ gulp.task('build', function(done) {
   });
 });
 
+gulp.task('watch', function() {
+  gulp.watch('src/*', ['build']);
+});
+
 gulp.task('default', ['build']);

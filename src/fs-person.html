@@ -63,14 +63,17 @@ fs-person {
   display: none; /* [7] */
 }
 
-.locale-zh .fs-person__name,
-.locale-ja .fs-person__name,
-.locale-ko .fs-person__name {
+[lang=zh] .fs-person__name,
+[lang=ja] .fs-person__name,
+[lang=ko] .fs-person__name {
   font-weight: normal; /* [3] */
 }
 
 .fs-person__details {
   font-size: 12px;
+  font-size: var(--fs-font-size-small);
+  line-height: 1.35rem;
+  line-height: var(--fs-line-height-small);
 }
 
 .fs-person__lifespan,
@@ -106,6 +109,7 @@ fs-person {
 
 .fs-person__portrait {
   background-color: #f4f4f4;
+  background-color: var(--fs-color-grey-background-light);
   background-size: 60%;
   border: 4px solid #d9d9d9;
   border-radius: 50%;
@@ -204,6 +208,7 @@ fs-person[theme="nightfall"] .fs-person__portrait {
 
 fs-person[theme="nightfall"] .fs-person__details {
   color: #ecebea;
+  color: var(--fs-color-grey-background);
 }
 
 
@@ -234,6 +239,10 @@ fs-person[relation="spouse2"] .fs-person__sex:before  {
   border-right: 0;
   position: absolute;
   right: 100%
+}
+
+fs-person[relation="spouse2"] {
+  padding-top: 5px;
 }
 
 fs-person[relation="spouse1"] .fs-person__sex:before {

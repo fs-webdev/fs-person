@@ -89,6 +89,14 @@
       </div>
     </div>
 
+    <h3>Couple</h3>
+    <div class="demo-snippet fs-card">
+      <div class="demo">
+<fs-person relation="spouse1"></fs-person>
+<fs-person relation="spouse2"></fs-person>
+      </div>
+    </div>
+
     <script>
     (function() {
       var fsCore = document.createElement('fs-core-element');
@@ -98,7 +106,7 @@
         givenName: 'John',
         familyName: 'Doe',
         sex: 'MALE',
-        lifespan: 'December 24, 1990 - May 24, 1990',
+        lifespan: 'December 24, 1970 - May 24, 1990',
         id: 'XKCD-123',
         nameSystem: 'eurotpyic',
         portraitUrl: 'https://randomuser.me/api/portraits/men/90.jpg'
@@ -109,20 +117,22 @@
         givenName: 'Jane',
         familyName: 'Doe',
         sex: 'FEMALE',
-        lifespan: 'December 24, 1990 - May 24, 1990',
-        id: 'XKCD-123',
+        lifespan: 'February 2, 1972 - July 19, 2000',
+        id: 'XKCD-456',
         nameSystem: 'sinotypic'
       };
 
       // add automatic code output
-      Array.from(document.querySelectorAll('.demo')).forEach(function(demo) {
+      Array.from(document.querySelectorAll('.demo')).forEach(function(demo, index) {
         var code = fsCore.htmlEncode(demo.innerHTML.trim());
 
-        code += `\n\n&lt;script&gt;
+        if (index === 0) {
+          code += `\n\n&lt;script&gt;
 Array.from(document.querySelectorAll('fs-person')).forEach(function(el) {
   el.person = ${JSON.stringify(person,null,4).replace('}','  }')};
 });
 &lt;/script&gt;`;
+        }
 
         var preEL = document.createElement('pre');
         var codeEl = document.createElement('code');
@@ -133,12 +143,12 @@ Array.from(document.querySelectorAll('fs-person')).forEach(function(el) {
         demo.parentElement.appendChild(preEL);
       });
 
-      var persons = document.querySelectorAll('fs-person:not([relation="wife"])');
+      var persons = document.querySelectorAll('fs-person:not([relation="spouse2"])');
       for (var i = 0; i < persons.length; i++) {
         persons[i].person = person;
       }
 
-      document.querySelector('fs-person[relation="wife"]').person = person2;
+      document.querySelector('fs-person[relation="spouse2"]').person = person2;
     })();
     </script>
     <script src="https://cdn.jsdelivr.net/prism/1.6.0/prism.js"></script>
