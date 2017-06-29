@@ -99,8 +99,6 @@
 
     <script>
     (function() {
-      var fsCore = document.createElement('fs-core-element');
-
       var person = {
         name: 'John Doe',
         givenName: 'John',
@@ -124,7 +122,10 @@
 
       // add automatic code output
       Array.from(document.querySelectorAll('.demo')).forEach(function(demo, index) {
-        var code = fsCore.htmlEncode(demo.innerHTML.trim());
+        var code = demo.innerHTML
+          .trim()
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
 
         if (index === 0) {
           code += `\n\n&lt;script&gt;
@@ -143,12 +144,21 @@ Array.from(document.querySelectorAll('fs-person')).forEach(function(el) {
         demo.parentElement.appendChild(preEL);
       });
 
-      var persons = document.querySelectorAll('fs-person:not([relation="spouse2"])');
-      for (var i = 0; i < persons.length; i++) {
-        persons[i].person = person;
+      function setPeople() {
+        var persons = document.querySelectorAll('fs-person:not([relation="spouse2"])');
+        for (var i = 0; i < persons.length; i++) {
+          persons[i].person = person;
+        }
+
+        document.querySelector('fs-person[relation="spouse2"]').person = person2;
       }
 
-      document.querySelector('fs-person[relation="spouse2"]').person = person2;
+      if ('import' in document.createElement('link')) {
+        setPeople();
+      }
+      else {
+        window.addEventListener('WebComponentsReady', setPeople);
+      }
     })();
     </script>
     <script src="https://cdn.jsdelivr.net/prism/1.6.0/prism.js"></script>
