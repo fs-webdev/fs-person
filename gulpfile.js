@@ -1,6 +1,7 @@
 const gulp = require('gulp');
 const fs = require('fs');
 const glob = require('glob');
+var path = require('path');
 
 gulp.task('build', function(done) {
   glob('locales/*.json', function(err, files) {
@@ -9,7 +10,8 @@ gulp.task('build', function(done) {
     let langObj = {};
 
     files.forEach(function(file) {
-      const lang = file.substr(file.lastIndexOf('_')+1, 2);
+      const filePath = path.basename(file, '.json');
+      const lang = filePath.substr(filePath.lastIndexOf('_')+1);
 
       try {
         const contents = fs.readFileSync(file, 'utf-8');

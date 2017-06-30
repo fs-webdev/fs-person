@@ -29,7 +29,7 @@ el.person = {
 
 All properties are optional. Properties not passed in will not be displayed.
 
-* `lang` - Language of the name. Passing this attribute allows screen readers to change the language they read the name as.
+* `lang` - [ISO language code](https://www.w3schools.com/tags/ref_language_codes.asp) of the name. Will be used as the `lang` attribute on the name element. This allows screen readers to [properly pronounce the name](https://www.paciellogroup.com/blog/2016/06/using-the-html-lang-attribute/).
 * `name` - Full name of the person. Defaults to `[Unknown Name]`.
 * `givenName` - Given name of the person. Defaults to `[Unknown Name]`.
 * `familyName` - Family name of the person.
