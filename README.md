@@ -29,7 +29,7 @@ el.person = {
 
 All properties are optional. Properties not passed in will not be displayed.
 
-* `lang` - [ISO language code](https://www.w3schools.com/tags/ref_language_codes.asp) of the name. Will be used as the `lang` attribute on the name element. This allows screen readers to [properly pronounce the name](https://www.paciellogroup.com/blog/2016/06/using-the-html-lang-attribute/).
+* `lang` - [ISO language code](https://www.w3schools.com/tags/ref_language_codes.asp) of the name. Will be used as the `lang` attribute on the name element. This allows screen readers to [properly pronounce the name](https://www.paciellogroup.com/blog/2016/06/using-the-html-lang-attribute/) when it's in a different language the pages.
 * `name` - Full name of the person. Defaults to `[Unknown Name]`.
 * `givenName` - Given name of the person. Defaults to `[Unknown Name]`.
 * `familyName` - Family name of the person.
@@ -61,6 +61,10 @@ The person object can be passed in though the `person` JavaScript property or th
 <fs-person person="[[person1]]" relation="spouse1"></fs-person>
 <fs-person person="[[person2]]" relation="spouse2"></fs-person>
 ```
+
+### Properties
+
+* `person` - The person object. Can set this property instead of using the `person` attribute.
 
 ### Slots
 

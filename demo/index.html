@@ -147,7 +147,7 @@ Array.from(document.querySelectorAll('fs-person')).forEach(function(el) {
       function setPeople() {
         var persons = document.querySelectorAll('fs-person:not([relation="spouse2"])');
         for (var i = 0; i < persons.length; i++) {
-          persons[i].person = person;
+          persons[i].person = JSON.parse(JSON.stringify(person));
         }
 
         document.querySelector('fs-person[relation="spouse2"]').person = person2;

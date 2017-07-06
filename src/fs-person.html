@@ -301,8 +301,8 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
   proto.createdCallback = function () {
 
     // accept child name element wrapper
-    this.nameSlot = this.querySelector('[slot="name"]');
-  },
+    this._nameSlot = this.querySelector('[slot="name"]');
+  };
 
   proto.attributeChangedCallback = function(attr, oldValue, newValue) {
 
@@ -429,9 +429,9 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
 
     // full name
     // wrap the name in the slot element
-    if (this.nameSlot) {
-      this.nameSlot.textContent = this.person.name;
-      fullNameEl.appendChild(this.nameSlot);
+    if (this._nameSlot) {
+      this._nameSlot.textContent = this.person.name;
+      fullNameEl.appendChild(this._nameSlot);
     }
     else {
       fullNameEl.textContent = this.person.name;
