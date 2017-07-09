@@ -2,9 +2,13 @@
 
 Standard display of a persons sex, name, lifespan, and id for FamilySearch.
 
+![](/../screenshots/person.png?raw=true)
+
 ## Installation
 
+```
 $ bower install --save fs-webdev/fs-person
+```
 
 ## Usage
 
