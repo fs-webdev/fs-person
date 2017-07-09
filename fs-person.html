@@ -298,12 +298,64 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
 
   var proto = Object.create(HTMLElement.prototype);
 
+  /**
+   * Initialize the person and set initial state.
+   */
   proto.createdCallback = function () {
 
     // accept child name element wrapper
     this._nameSlot = this.querySelector('[slot="name"]');
+
+    // save initial state of person before creating the property
+    var person = this.person;
+
+    Object.defineProperties(this, {
+      person: {
+        get: function() {
+          return this._person;
+        },
+        set: function(value) {
+          this._person = value;
+
+          // set defaults
+          this._person.sex = this._person.sex || 'unknown';
+
+          // safely decode user generated values
+          this._person.name = fsCore.htmlDecode(this._person.name);
+          this._person.familyName = fsCore.htmlDecode(this._person.familyName);
+          this._person.givenName = fsCore.htmlDecode(this._person.givenName);
+
+          // treat names with only whitespace characters as empty
+          this._person.name = (this.person.name && this.person.name.trim() ?
+            this.person.name.trim() :
+            fsCore.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
+
+          this._person.familyName = (this.person.familyName && this.person.familyName.trim() ?
+            this.person.familyName.trim()
+            : null);
+
+          // set the given name to unknown name for portrait orientation
+          this._person.givenName = (this.person.givenName && this.person.givenName.trim() ?
+            this.person.givenName.trim() :
+            fsCore.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
+
+          this._render();
+        }
+      }
+    });
+
+    // set initial state
+    if (person) {
+      this.person = person;
+    }
+    else if (this.hasAttribute('person')) {
+      this.attributeChangedCallback('person', null, this.getAttribute('person'));
+    }
   };
 
+  /**
+   * Listen to the person attribute.
+   */
   proto.attributeChangedCallback = function(attr, oldValue, newValue) {
 
     // accept person json attribute value
@@ -317,41 +369,9 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
     }
   };
 
-  Object.defineProperties(proto, {
-    person: {
-      get: function() {
-        return this._person;
-      },
-      set: function(value) {
-        this._person = value;
-
-        // set defaults
-        this._person.sex = this._person.sex || 'unknown';
-
-        // safely decode user generated values
-        this._person.name = fsCore.htmlDecode(this._person.name);
-        this._person.familyName = fsCore.htmlDecode(this._person.familyName);
-        this._person.givenName = fsCore.htmlDecode(this._person.givenName);
-
-        // treat names with only whitespace characters as empty
-        this._person.name = (this.person.name && this.person.name.trim() ?
-          this.person.name.trim() :
-          fsCore.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
-
-        this._person.familyName = (this.person.familyName && this.person.familyName.trim() ?
-          this.person.familyName.trim()
-          : null);
-
-        // set the given name to unknown name for portrait orientation
-        this._person.givenName = (this.person.givenName && this.person.givenName.trim() ?
-          this.person.givenName.trim() :
-          fsCore.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
-
-        this._render();
-      }
-    }
-  });
-
+  /**
+   * Render the person object.
+   */
   proto._render = function() {
     if (!this.person) return;
 
