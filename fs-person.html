@@ -290,7 +290,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
 (function() {
   var doc = (document._currentScript || document.currentScript).ownerDocument;
   var template = doc.querySelector('#fs-person-template');
-  FS._registerTranslations({"en":{"fs.shared.fsPerson.UNKNOWN_NAME":"[Unknown Name]"},"es":{"fs.shared.fsPerson.UNKNOWN_NAME":"[Nombre desconocido]"}});
+  FS._registerTranslations({"en":{"fs.shared.fsPerson.UNKNOWN_NAME":"[Unknown Name]","fs.shared.fsPerson.MALE":"Male","fs.shared.fsPerson.FEMALE":"Female","fs.shared.fsPerson.UNKNOWN":"Sex Unknown"},"es":{"fs.shared.fsPerson.UNKNOWN_NAME":"[Nombre desconocido]"}});
 
   var VALID_ICON_SIZES = ['medium', 'small'];
   var DEFAULT_ICON_SIZE = VALID_ICON_SIZES[0];
@@ -442,7 +442,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
       }
 
       sexEl.classList.add('fs-icon-' + iconSize + '-' + sex);
-      sexEl.querySelector('span').textContent = sex;
+      sexEl.querySelector('span').textContent = FS.i18n('fs.shared.fsPerson.' + sex.toUpperCase());
     }
     else {
       sexEl.remove();

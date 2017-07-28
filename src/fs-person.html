@@ -442,7 +442,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
       }
 
       sexEl.classList.add('fs-icon-' + iconSize + '-' + sex);
-      sexEl.querySelector('span').textContent = sex;
+      sexEl.querySelector('span').textContent = FS.i18n('fs.shared.fsPerson.' + sex.toUpperCase());
     }
     else {
       sexEl.remove();
