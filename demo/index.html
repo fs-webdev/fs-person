@@ -9,7 +9,6 @@
     <title>fs-person demo</title>
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel='import' href='../fs-person.html'>
     <link rel='import' href='../../fs-core-element/fs-core-element.html'>
     <style>
     .demo-snippet {
@@ -104,18 +103,18 @@
         givenName: 'John',
         familyName: 'Doe',
         sex: 'MALE',
-        lifespan: 'December 24, 1970 - May 24, 1990',
+        lifespan: '24 December 1970 - 24 May 1990',
         id: 'XKCD-123',
         nameSystem: 'eurotpyic',
         portraitUrl: 'https://randomuser.me/api/portraits/men/90.jpg'
-      }
+      };
 
       var person2 = {
         name: 'Jane Doe',
         givenName: 'Jane',
         familyName: 'Doe',
         sex: 'FEMALE',
-        lifespan: 'February 2, 1972 - July 19, 2000',
+        lifespan: '2 February 1972 - 19 July 2000',
         id: 'XKCD-456',
         nameSystem: 'sinotypic'
       };
@@ -144,23 +143,19 @@ Array.from(document.querySelectorAll('fs-person')).forEach(function(el) {
         demo.parentElement.appendChild(preEL);
       });
 
-      function setPeople() {
-        var persons = document.querySelectorAll('fs-person:not([relation="spouse2"])');
-        for (var i = 0; i < persons.length; i++) {
-          persons[i].person = JSON.parse(JSON.stringify(person));
-        }
-
-        document.querySelector('fs-person[relation="spouse2"]').person = person2;
+      // set people
+      var persons = document.querySelectorAll('fs-person:not([relation="spouse2"])');
+      for (var i = 0; i < persons.length; i++) {
+        persons[i].person = JSON.parse(JSON.stringify(person));
       }
 
-      if ('import' in document.createElement('link')) {
-        setPeople();
-      }
-      else {
-        window.addEventListener('WebComponentsReady', setPeople);
-      }
+      document.querySelector('fs-person[relation="spouse2"]').person = person2;
     })();
     </script>
     <script src="https://cdn.jsdelivr.net/prism/1.6.0/prism.js"></script>
+
+    <!-- by importing the element last, the code output script can run before it gets
+         populated -->
+    <link rel='import' href='../fs-person.html'>
   </body>
 </html>

@@ -1,6 +1,6 @@
-<link rel="import" href="../fs-core-element/fs-core-element.html">
+<link rel="import" href="../fs-globals/fs-globals.html">
 
-<style>
+<style data-fs-person>
 /*
  * 1. Use flex to allow portrait and vitals to vertically center with one another
  * 2. Don't use flex for vital information as it will add a newline character after
@@ -290,8 +290,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
 (function() {
   var doc = (document._currentScript || document.currentScript).ownerDocument;
   var template = doc.querySelector('#fs-person-template');
-  var fsCore = document.createElement('fs-core-element');
-  fsCore.translations = /* LANG CODE */;
+  FS._registerTranslations(/* LANG CODE */);
 
   var VALID_ICON_SIZES = ['medium', 'small'];
   var DEFAULT_ICON_SIZE = VALID_ICON_SIZES[0];
@@ -301,7 +300,19 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
   /**
    * Initialize the person and set initial state.
    */
-  proto.createdCallback = function () {
+  proto.attachedCallback = function () {
+    var root = this.getRootNode();
+
+    // In polyfilled browsers there is no shadow DOM so global styles still style
+    // the "fake" shadow DOM. We need to test for truly native support so we know
+    // when to inject styles into the shadow DOM. The best way I've found to do that
+    // is to test the toString output of a shadowroot since `instanceof ShadowRoot`
+    // returns true when it's just a document-fragment in polyfilled browsers
+    // @see https://stackoverflow.com/questions/45068560/using-a-non-shadow-dom-custom-element-both-inside-and-outside-the-shadow-dom
+    if (root.toString() === '[object ShadowRoot]' && !root.querySelector('style[data-fs-person]')) {
+      var styles = doc.querySelector('style[data-fs-person]').cloneNode(true);
+      root.appendChild(styles);
+    }
 
     // accept child name element wrapper
     this._nameSlot = this.querySelector('[slot="name"]');
@@ -321,14 +332,14 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
           this._person.sex = this._person.sex || 'unknown';
 
           // safely decode user generated values
-          this._person.name = fsCore.htmlDecode(this._person.name);
-          this._person.familyName = fsCore.htmlDecode(this._person.familyName);
-          this._person.givenName = fsCore.htmlDecode(this._person.givenName);
+          this._person.name = FS.htmlDecode(this._person.name);
+          this._person.familyName = FS.htmlDecode(this._person.familyName);
+          this._person.givenName = FS.htmlDecode(this._person.givenName);
 
           // treat names with only whitespace characters as empty
           this._person.name = (this.person.name && this.person.name.trim() ?
             this.person.name.trim() :
-            fsCore.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
+            FS.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
 
           this._person.familyName = (this.person.familyName && this.person.familyName.trim() ?
             this.person.familyName.trim()
@@ -337,7 +348,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
           // set the given name to unknown name for portrait orientation
           this._person.givenName = (this.person.givenName && this.person.givenName.trim() ?
             this.person.givenName.trim() :
-            fsCore.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
+            FS.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
 
           this._render();
         }
@@ -438,7 +449,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
     }
 
     // name lang attribute so screen readers know how to read the name
-    if (this.person.lang && this.person.lang !== fsCore.simpleLocale) {
+    if (this.person.lang && this.person.lang !== FS.simpleLocale) {
       nameEl.setAttribute('lang', this.person.lang);
     }
 
