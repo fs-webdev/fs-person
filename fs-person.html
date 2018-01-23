@@ -299,7 +299,6 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
   var VALID_ICON_SIZES = ['medium', 'small'];
   var DEFAULT_ICON_SIZE = VALID_ICON_SIZES[0];
 
-  var proto = Object.create(HTMLElement.prototype);
   class FSPerson extends HTMLElement {
 
     static get observedAttributes() {
@@ -457,7 +456,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
        }
 
        // name lang attribute so screen readers know how to read the name
-       if (this.person.lang && this.person.lang !== FS.simpleLocale) {
+       if (this.person.lang && this.person.lang !== FS.simpleLocale()) {
          nameEl.setAttribute('lang', this.person.lang);
        }
 
