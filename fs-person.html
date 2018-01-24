@@ -299,219 +299,224 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
   var VALID_ICON_SIZES = ['medium', 'small'];
   var DEFAULT_ICON_SIZE = VALID_ICON_SIZES[0];
 
-  var proto = Object.create(HTMLElement.prototype);
+  class FSPerson extends HTMLElement {
 
-  /**
-   * Initialize the person and set initial state.
-   */
-  proto.attachedCallback = function () {
-    var root = this.getRootNode();
-
-    // In polyfilled browsers there is no shadow DOM so global styles still style
-    // the "fake" shadow DOM. We need to test for truly native support so we know
-    // when to inject styles into the shadow DOM. The best way I've found to do that
-    // is to test the toString output of a shadowroot since `instanceof ShadowRoot`
-    // returns true when it's just a document-fragment in polyfilled browsers
-    // @see https://stackoverflow.com/questions/45068560/using-a-non-shadow-dom-custom-element-both-inside-and-outside-the-shadow-dom
-    if (root.toString() === '[object ShadowRoot]' && !root.querySelector('style[data-fs-person]')) {
-      var styles = doc.querySelector('style[data-fs-person]').cloneNode(true);
-      root.appendChild(styles);
+    static get observedAttributes() {
+      return ['person'];
     }
+    /**
+     * Initialize the person and set initial state.
+     */
+    connectedCallback() {
+      var root = this.getRootNode();
 
-    // accept child name element wrapper
-    this._nameSlot = this.querySelector('[slot="name"]');
+      // In polyfilled browsers there is no shadow DOM so global styles still style
+      // the "fake" shadow DOM. We need to test for truly native support so we know
+      // when to inject styles into the shadow DOM. The best way I've found to do that
+      // is to test the toString output of a shadowroot since `instanceof ShadowRoot`
+      // returns true when it's just a document-fragment in polyfilled browsers
+      // @see https://stackoverflow.com/questions/45068560/using-a-non-shadow-dom-custom-element-both-inside-and-outside-the-shadow-dom
+      if (root.toString() === '[object ShadowRoot]' && !root.querySelector('style[data-fs-person]')) {
+        var styles = doc.querySelector('style[data-fs-person]').cloneNode(true);
+        root.appendChild(styles);
+      }
 
-    // save initial state of person before creating the property
-    var person = this.person;
+      // accept child name element wrapper
+      this._nameSlot = this.querySelector('[slot="name"]');
 
-    Object.defineProperties(this, {
-      person: {
-        get: function() {
-          return this._person;
-        },
-        set: function(value) {
-          this._person = value;
+      // save initial state of person before creating the property
+      var person = this.person;
 
-          // set defaults
-          this._person.sex = this._person.sex || 'unknown';
+      Object.defineProperties(this, {
+        person: {
+          get: function() {
+            return this._person;
+          },
+          set: function(value) {
+            this._person = value;
 
-          // safely decode user generated values
-          this._person.name = FS.htmlDecode(this._person.name);
-          this._person.familyName = FS.htmlDecode(this._person.familyName);
-          this._person.givenName = FS.htmlDecode(this._person.givenName);
+            // set defaults
+            this._person.sex = this._person.sex || 'unknown';
 
-          // treat names with only whitespace characters as empty
-          this._person.name = (this.person.name && this.person.name.trim() ?
-            this.person.name.trim() :
-            FS.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
+            // safely decode user generated values
+            this._person.name = FS.htmlDecode(this._person.name);
+            this._person.familyName = FS.htmlDecode(this._person.familyName);
+            this._person.givenName = FS.htmlDecode(this._person.givenName);
 
-          this._person.familyName = (this.person.familyName && this.person.familyName.trim() ?
-            this.person.familyName.trim()
-            : null);
+            // treat names with only whitespace characters as empty
+            this._person.name = (this.person.name && this.person.name.trim() ?
+              this.person.name.trim() :
+              FS.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
 
-          // set the given name to unknown name for portrait orientation
-          this._person.givenName = (this.person.givenName && this.person.givenName.trim() ?
-            this.person.givenName.trim() :
-            FS.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
+            this._person.familyName = (this.person.familyName && this.person.familyName.trim() ?
+              this.person.familyName.trim()
+              : null);
 
-          this._render();
+            // set the given name to unknown name for portrait orientation
+            this._person.givenName = (this.person.givenName && this.person.givenName.trim() ?
+              this.person.givenName.trim() :
+              FS.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
+
+            this._render();
+          }
         }
+      });
+
+      // set initial state
+      if (person) {
+        this.person = person;
       }
-    });
-
-    // set initial state
-    if (person) {
-      this.person = person;
-    }
-    else if (this.hasAttribute('person')) {
-      this.attributeChangedCallback('person', null, this.getAttribute('person'));
-    }
-  };
-
-  /**
-   * Listen to the person attribute.
-   */
-  proto.attributeChangedCallback = function(attr, oldValue, newValue) {
-
-    // accept person json attribute value
-    if (attr === 'person') {
-      try {
-        this.person = JSON.parse(newValue);
-      }
-      catch (e) {
-        // ?
+      else if (this.hasAttribute('person')) {
+        this.attributeChangedCallback('person', null, this.getAttribute('person'));
       }
     }
-  };
 
-  /**
-   * Render the person object.
-   */
-  proto._render = function() {
-    if (!this.person) return;
+    /**
+     * Listen to the person attribute.
+     */
+     attributeChangedCallback(attr, oldValue, newValue) {
 
-    // clear out old DOM
-    this.innerHTML = '';
+       // accept person json attribute value
+       if (attr === 'person') {
+         try {
+           this.person = JSON.parse(newValue);
+         }
+         catch (e) {
+           // ?
+         }
+       }
+     }
 
-    var clone = document.importNode(template.content, true);
-    var sex = this.person.sex.toLowerCase();
-    var hideSeparator = false;  // separator should be hidden if lifespan or id is hidden
+     /**
+      * Render the person object.
+      */
+     _render() {
+       if (!this.person) return;
 
-    // selectors
-    var portraitEl = clone.querySelector('.fs-person__portrait');
-    var imageEl = clone.querySelector('.fs-person__image');
-    var sexEl = clone.querySelector('.fs-person__sex');
-    var nameEl = clone.querySelector('.fs-person__name');
-    var fullNameEl = clone.querySelector('.fs-person__full-name');
-    var familyNameEl = clone.querySelector('.fs-person__family-name');
-    var givenNameEl = clone.querySelector('.fs-person__given-name');
-    var lifespanEl = clone.querySelector('.fs-person__lifespan');
-    var separatorEl = clone.querySelector('.fs-person__separator');
-    var idEl = clone.querySelector('.fs-person__id');
+       // clear out old DOM
+       this.innerHTML = '';
 
-    // attributes
-    var orientationAttr = this.getAttribute('orientation');
-    var iconSizeAttr = this.getAttribute('icon-size');
-    var portraitAttr = this.hasAttribute('portrait');
-    var noSexAttr = this.hasAttribute('no-sex');
-    var noLifespanAttr = this.hasAttribute('no-lifespan');
-    var noIdAttr = this.hasAttribute('no-id');
+       var clone = document.importNode(template.content, true);
+       var sex = this.person.sex.toLowerCase();
+       var hideSeparator = false;  // separator should be hidden if lifespan or id is hidden
 
-    // portrait
-    if (portraitAttr || orientationAttr === 'portrait') {
-      portraitEl.classList.add('fs-icon-large-' + sex);
+       // selectors
+       var portraitEl = clone.querySelector('.fs-person__portrait');
+       var imageEl = clone.querySelector('.fs-person__image');
+       var sexEl = clone.querySelector('.fs-person__sex');
+       var nameEl = clone.querySelector('.fs-person__name');
+       var fullNameEl = clone.querySelector('.fs-person__full-name');
+       var familyNameEl = clone.querySelector('.fs-person__family-name');
+       var givenNameEl = clone.querySelector('.fs-person__given-name');
+       var lifespanEl = clone.querySelector('.fs-person__lifespan');
+       var separatorEl = clone.querySelector('.fs-person__separator');
+       var idEl = clone.querySelector('.fs-person__id');
 
-      // portrait url has content
-      if (this.person.portraitUrl) {
-        imageEl.setAttribute('src', this.person.portraitUrl);
-      }
-      else {
-        imageEl.remove();
-      }
-    }
-    else {
-      portraitEl.remove();
-    }
+       // attributes
+       var orientationAttr = this.getAttribute('orientation');
+       var iconSizeAttr = this.getAttribute('icon-size');
+       var portraitAttr = this.hasAttribute('portrait');
+       var noSexAttr = this.hasAttribute('no-sex');
+       var noLifespanAttr = this.hasAttribute('no-lifespan');
+       var noIdAttr = this.hasAttribute('no-id');
 
-    // sex
-    if (this.person.sex && !this.hasAttribute('no-sex')) {
-      var iconSize = DEFAULT_ICON_SIZE
+       // portrait
+       if (portraitAttr || orientationAttr === 'portrait') {
+         portraitEl.classList.add('fs-icon-large-' + sex);
 
-      // never allow a medium sex icon if the portrait is showing or when inline
-      if (portraitAttr || orientationAttr === 'inline') {
-        iconSize = 'small';
-      }
-      else if (VALID_ICON_SIZES.indexOf(iconSizeAttr) !== -1) {
-        iconSize = iconSizeAttr;
-      }
+         // portrait url has content
+         if (this.person.portraitUrl) {
+           imageEl.setAttribute('src', this.person.portraitUrl);
+         }
+         else {
+           imageEl.remove();
+         }
+       }
+       else {
+         portraitEl.remove();
+       }
 
-      sexEl.classList.add('fs-icon-' + iconSize + '-' + sex);
-      sexEl.querySelector('span').textContent = FS.i18n('fs.shared.fsPerson.' + sex.toUpperCase());
-    }
-    else {
-      sexEl.remove();
-    }
+       // sex
+       if (this.person.sex && !this.hasAttribute('no-sex')) {
+         var iconSize = DEFAULT_ICON_SIZE
 
-    // name lang attribute so screen readers know how to read the name
-    if (this.person.lang && this.person.lang !== FS.simpleLocale) {
-      nameEl.setAttribute('lang', this.person.lang);
-    }
+         // never allow a medium sex icon if the portrait is showing or when inline
+         if (portraitAttr || orientationAttr === 'inline') {
+           iconSize = 'small';
+         }
+         else if (VALID_ICON_SIZES.indexOf(iconSizeAttr) !== -1) {
+           iconSize = iconSizeAttr;
+         }
 
-    // name system
-    if (this.person.nameSystem) {
-      nameEl.classList.add('fs-person__name--' + this.person.nameSystem);
-    }
+         sexEl.classList.add('fs-icon-' + iconSize + '-' + sex);
+         sexEl.querySelector('span').textContent = FS.i18n('fs.shared.fsPerson.' + sex.toUpperCase());
+       }
+       else {
+         sexEl.remove();
+       }
 
-    // full name
-    // wrap the name in the slot element
-    if (this._nameSlot) {
-      this._nameSlot.textContent = this.person.name;
-      fullNameEl.appendChild(this._nameSlot);
-    }
-    else {
-      fullNameEl.textContent = this.person.name;
-    }
+       // name lang attribute so screen readers know how to read the name
+       if (this.person.lang && this.person.lang !== FS.simpleLocale()) {
+         nameEl.setAttribute('lang', this.person.lang);
+       }
 
-    // family name
-    if (this.person.familyName) {
-      familyNameEl.textContent = this.person.familyName;
-    }
-    else {
-      familyNameEl.remove();
-    }
+       // name system
+       if (this.person.nameSystem) {
+         nameEl.classList.add('fs-person__name--' + this.person.nameSystem);
+       }
 
-    // given name
-    givenNameEl.textContent = this.person.givenName;
+       // full name
+       // wrap the name in the slot element
+       if (this._nameSlot) {
+         this._nameSlot.textContent = this.person.name;
+         fullNameEl.appendChild(this._nameSlot);
+       }
+       else {
+         fullNameEl.textContent = this.person.name;
+       }
 
-    // lifespan
-    if (this.person.lifespan && !noLifespanAttr) {
-      lifespanEl.querySelector('span').textContent = this.person.lifespan;
+       // family name
+       if (this.person.familyName) {
+         familyNameEl.textContent = this.person.familyName;
+       }
+       else {
+         familyNameEl.remove();
+       }
 
-      // set attribute for css hack to truncate lifespan
-      lifespanEl.setAttribute('data-lifespan', this.person.lifespan);
-    }
-    else {
-      lifespanEl.remove();
-      hideSeparator = true;
-    }
+       // given name
+       givenNameEl.textContent = this.person.givenName;
 
-    // id
-    if (this.person.id && !noIdAttr) {
-      idEl.textContent = this.person.id;
-    }
-    else {
-      idEl.remove();
-      hideSeparator = true;
-    }
+       // lifespan
+       if (this.person.lifespan && !noLifespanAttr) {
+         lifespanEl.querySelector('span').textContent = this.person.lifespan;
 
-    // separator
-    if (hideSeparator) {
-      separatorEl.remove();
-    }
+         // set attribute for css hack to truncate lifespan
+         lifespanEl.setAttribute('data-lifespan', this.person.lifespan);
+       }
+       else {
+         lifespanEl.remove();
+         hideSeparator = true;
+       }
 
-    this.appendChild(clone);
-  };
+       // id
+       if (this.person.id && !noIdAttr) {
+         idEl.textContent = this.person.id;
+       }
+       else {
+         idEl.remove();
+         hideSeparator = true;
+       }
 
-  document.registerElement('fs-person', {prototype: proto});
+       // separator
+       if (hideSeparator) {
+         separatorEl.remove();
+       }
+
+       this.appendChild(clone);
+     }
+
+  }
+
+  customElements.define('fs-person', FSPerson);
 })();
 </script>
