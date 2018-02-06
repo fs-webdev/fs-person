@@ -309,13 +309,13 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
      * Attached callback is added to make the element "hybrid", so it works in the V0 and V1 specs.
      */
     attachedCallback() {
-      this.connectedCallback("yo");
+      this.connectedCallback();
     }
 
     /**
      * Initialize the person and set initial state.
      */
-    connectedCallback(yo) {
+    connectedCallback() {
       var root = this.getRootNode();
 
       // In polyfilled browsers there is no shadow DOM so global styles still style
