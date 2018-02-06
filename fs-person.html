@@ -304,10 +304,18 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
     static get observedAttributes() {
       return ['person'];
     }
+
+    /*
+     * Attached callback is added to make the element "hybrid", so it works in the V0 and V1 specs.
+     */
+    attachedCallback() {
+      this.connectedCallback("yo");
+    }
+
     /**
      * Initialize the person and set initial state.
      */
-    connectedCallback() {
+    connectedCallback(yo) {
       var root = this.getRootNode();
 
       // In polyfilled browsers there is no shadow DOM so global styles still style
@@ -517,6 +525,14 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
 
   }
 
-  customElements.define('fs-person', FSPerson);
+/**
+  * Register element in using different methods for the V0 and V1 standards.
+  */
+  if('customElements' in window){
+    customElements.define('fs-person', FSPerson);
+  } else {
+    document.registerElement('fs-person', {prototype: Object.create(FSPerson.prototype)});
+  }
+
 })();
 </script>
