@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/fs-webdev/fs-person#readme",
   "devDependencies": {
+    "bower": "^1.5.1",
     "glob": "^7.1.2",
     "gulp": "^3.9.1",
     "pre-commit": "^1.2.2",
