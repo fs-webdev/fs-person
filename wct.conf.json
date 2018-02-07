@@ -3,6 +3,23 @@
     "local": {
       "browsers": [ "chrome" ]
     },
+    "sauce": {
+      "browsers": [
+        {
+          "browserName":  "safari",
+          "platform":     "OS X 10.12",
+          "version":      "11"
+        },
+        {
+          "browserName":  "chrome",
+          "platform":     "Windows 10"
+        },
+        {
+          "browserName":  "firefox",
+          "platform":     "OS X 10.12"
+        }
+      ]
+    },
     "istanbul": {
       "dir": "./coverage",
       "reporters": ["text", "text-summary", "lcov"],
