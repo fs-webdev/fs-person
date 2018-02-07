@@ -29,6 +29,8 @@
     "web-component-tester": "git+https://github.com/t2ym/web-component-tester#6.0.0-wct6-plugin.1"
   },
   "scripts": {
+    "preinstall": "git config --global url.https://github.com/.insteadOf git://github.com/",
+    "postinstall": "bower install && gulp build",
     "test": "bin/tests",
     "buildDist": "gulp build && git add ."
   },
