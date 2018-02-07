@@ -31,7 +31,7 @@
   },
   "scripts": {
     "preinstall": "git config --global url.https://github.com/.insteadOf git://github.com/",
-    "postinstall": "bower install && gulp build",
+    "postinstall": "bower install",
     "test": "bin/tests",
     "buildDist": "gulp build && git add ."
   },
