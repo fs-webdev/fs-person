@@ -17,6 +17,10 @@
         {
           "browserName":  "firefox",
           "platform":     "OS X 10.12"
+        },
+        {
+          "browserName": "microsoftedge",
+          "platform": "Windows 10"
         }
       ]
     },
