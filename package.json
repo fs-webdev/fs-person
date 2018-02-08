@@ -20,12 +20,19 @@
   },
   "homepage": "https://github.com/fs-webdev/fs-person#readme",
   "devDependencies": {
+    "bower": "^1.5.1",
     "glob": "^7.1.2",
-    "gulp": "^3.9.1",
-    "pre-commit": "^1.2.2"
+    "gulp": "^3.0.0",
+    "pre-commit": "^1.2.2",
+    "web-component-tester": "t2ym/web-component-tester#6.0.0-wct6-plugin.1",
+    "web-component-tester-istanbul": "t2ym/web-component-tester-istanbul#0.10.1-wct6.11",
+    "wct-local": "^2.0.8",
+    "wct-sauce": "^1.8.4"
   },
   "scripts": {
-    "test": "wct",
+    "preinstall": "git config --global url.https://github.com/.insteadOf git://github.com/",
+    "postinstall": "bower install",
+    "test": "bin/tests",
     "buildDist": "gulp build && git add ."
   },
   "pre-commit": [
