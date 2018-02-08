@@ -4,6 +4,8 @@
 set -o errexit
 set -o pipefail 
 
+gulp build
+
 if [ "$TRAVIS" == "true" ]; then
   ./node_modules/web-component-tester/bin/wct --skip-plugin local
 else
