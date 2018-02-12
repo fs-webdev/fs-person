@@ -74,8 +74,6 @@ fs-person {
 .fs-person__details {
   font-size: 12px;
   font-size: var(--fs-font-size-small, 12px);
-  height: 1.35rem;
-  height: var(--fs-line-height-small, 1.35rem);
   line-height: 1.35rem; /* [9] */
   line-height: var(--fs-line-height-small, 1.35rem);
 }
@@ -332,6 +330,9 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
       // accept child name element wrapper
       this._nameSlot = this.querySelector('[slot="name"]');
 
+      // accept extra content for the details section
+      this._extraDetailsSlot = this.querySelector('[slot="extra-details"]');
+
       // save initial state of person before creating the property
       var person = this.person;
 
@@ -409,6 +410,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
        var hideSeparator = false;  // separator should be hidden if lifespan or id is hidden
 
        // selectors
+       var detailsEl = clone.querySelector('.fs-person__details');
        var portraitEl = clone.querySelector('.fs-person__portrait');
        var imageEl = clone.querySelector('.fs-person__image');
        var sexEl = clone.querySelector('.fs-person__sex');
@@ -513,6 +515,11 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
        else {
          idEl.remove();
          hideSeparator = true;
+       }
+
+       // extra details
+       if (this._extraDetailsSlot) {
+        detailsEl.appendChild(this._extraDetailsSlot);
        }
 
        // separator
