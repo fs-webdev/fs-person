@@ -486,7 +486,11 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
        // wrap the name in the slot element
        if (this._nameSlot) {
          this._nameSlot.textContent = this.person.name;
-         fullNameEl.classList.add('no-bold');
+
+         if (this._nameSlot.nodeName === "A") {
+          fullNameEl.classList.add('no-bold');
+         }
+         
          fullNameEl.appendChild(this._nameSlot);
        }
        else {
