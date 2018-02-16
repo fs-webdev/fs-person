@@ -78,8 +78,14 @@ fs-person {
 .fs-person__details {
   font-size: 12px;
   font-size: var(--fs-font-size-small, 12px);
+  height: 1.35rem;
+  height: var(--fs-line-height-small, 1.35rem);
   line-height: 1.35rem; /* [9] */
   line-height: var(--fs-line-height-small, 1.35rem);
+}
+
+.fs-person__details.extra-details {
+  height: initial;
 }
 
 .fs-person__lifespan,
@@ -436,6 +442,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
 
        //clear out set classes
        fullNameEl.classList.remove('no-bold');
+       detailsEl.classList.remove('extra-details');
 
        // portrait
        if (portraitAttr || orientationAttr === 'portrait') {
@@ -490,7 +497,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
          if (this._nameSlot.nodeName === "A") {
           fullNameEl.classList.add('no-bold');
          }
-         
+
          fullNameEl.appendChild(this._nameSlot);
        }
        else {
@@ -531,6 +538,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
 
        // extra details
        if (this._extraDetailsSlot) {
+        detailsEl.classList.add('extra-details');
         detailsEl.appendChild(this._extraDetailsSlot);
        }
 
