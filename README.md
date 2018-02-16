@@ -79,3 +79,11 @@ You can pass a named slot as a child of `<fs-person>` and it will be used to wra
   <h3 slot="name"></h3>
 </fs-person>
 ```
+
+You can also pass in an extra details element as a child of `<fs-person>` and it will be displayed beneath the person's displayed information. This is helpful if you need to add an extra line of information, such as if you want to include a link to let the user "view [their] relationship" with the person.
+
+```html
+<fs-person>
+  <a href="#" slot="extra-details">View My Relationship</a>
+</fs-person>
+```
