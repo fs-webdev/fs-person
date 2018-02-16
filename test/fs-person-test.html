@@ -314,6 +314,14 @@
           expect(slotEl.textContent).to.equal(person.name);
         });
 
+        it('when a link is passed in for the name slot, no-bold class should be applied', function(){
+          el = fixture('fs-person-fixture-name-slot');
+          setPerson();
+
+          expect(fullNameEl.firstChild.nodeName).to.equal('A');
+          expect(fullNameEl.classList.contains('no-bold')).to.be.true;
+        });
+
       });
 
 
