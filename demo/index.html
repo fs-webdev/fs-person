@@ -71,7 +71,7 @@
       </div>
     </div>
 
-    <h3>Slot Element</h3>
+    <h3>Name Wrapper Slot Element</h3>
     <p>You can pass a named slot as a child of <code class="language-markup">&lt;fs-person&gt;</code> and it will be used to wrap the persons name. This is useful if you need to make the persons name a link or a heading.</p>
 
     <div class="demo-snippet fs-card">
@@ -87,6 +87,18 @@
 </fs-person>
       </div>
     </div>
+
+    <h3>Extra Details Slot Element</h3>
+    <p>You can pass in an extra details element as a child of <code class="language-markup">&lt;fs-person&gt;</code> and it will be displayed beneath the person's displayed information. This is if you need to add an extra line of information, such as if you want to include a link to let the user "view [their] relationship" with the person.</p>
+
+    <div class="demo-snippet fs-card">
+      <div class="demo">
+<fs-person>
+  <a href="JavaScript:Void(0);" slot="extra-details">View My Relationship</a>
+</fs-person>
+      </div>
+    </div>
+
 
     <h3>Couple</h3>
     <div class="demo-snippet fs-card">
