@@ -60,6 +60,10 @@ fs-person {
   text-overflow: ellipsis;
 }
 
+.fs-person__full-name.no-bold {
+  font-weight: normal;
+}
+
 .fs-person__given-name,
 .fs-person__family-name {
   display: none; /* [7] */
@@ -430,6 +434,9 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
        var noLifespanAttr = this.hasAttribute('no-lifespan');
        var noIdAttr = this.hasAttribute('no-id');
 
+       //clear out set classes
+       fullNameEl.classList.remove('no-bold');
+
        // portrait
        if (portraitAttr || orientationAttr === 'portrait') {
          portraitEl.classList.add('fs-icon-large-' + sex);
@@ -479,6 +486,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
        // wrap the name in the slot element
        if (this._nameSlot) {
          this._nameSlot.textContent = this.person.name;
+         fullNameEl.classList.add('no-bold');
          fullNameEl.appendChild(this._nameSlot);
        }
        else {
