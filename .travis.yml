@@ -15,4 +15,4 @@ cache:
 addons:
   sauce_connect: true
 after_success:
-  - 'codeclimate-test-reporter < reports/coverage/lcov.info'
+  - 'codeclimate-test-reporter < coverage/lcov.info'
