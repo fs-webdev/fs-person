@@ -60,6 +60,10 @@ fs-person {
   text-overflow: ellipsis;
 }
 
+.fs-person__full-name.no-bold {
+  font-weight: normal;
+}
+
 .fs-person__given-name,
 .fs-person__family-name {
   display: none; /* [7] */
@@ -78,6 +82,10 @@ fs-person {
   height: var(--fs-line-height-small, 1.35rem);
   line-height: 1.35rem; /* [9] */
   line-height: var(--fs-line-height-small, 1.35rem);
+}
+
+.fs-person__details.extra-details {
+  height: initial;
 }
 
 .fs-person__lifespan,
@@ -332,6 +340,9 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
       // accept child name element wrapper
       this._nameSlot = this.querySelector('[slot="name"]');
 
+      // accept extra content for the details section
+      this._extraDetailsSlot = this.querySelector('[slot="extra-details"]');
+
       // save initial state of person before creating the property
       var person = this.person;
 
@@ -409,6 +420,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
        var hideSeparator = false;  // separator should be hidden if lifespan or id is hidden
 
        // selectors
+       var detailsEl = clone.querySelector('.fs-person__details');
        var portraitEl = clone.querySelector('.fs-person__portrait');
        var imageEl = clone.querySelector('.fs-person__image');
        var sexEl = clone.querySelector('.fs-person__sex');
@@ -427,6 +439,10 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
        var noSexAttr = this.hasAttribute('no-sex');
        var noLifespanAttr = this.hasAttribute('no-lifespan');
        var noIdAttr = this.hasAttribute('no-id');
+
+       //clear out set classes
+       fullNameEl.classList.remove('no-bold');
+       detailsEl.classList.remove('extra-details');
 
        // portrait
        if (portraitAttr || orientationAttr === 'portrait') {
@@ -477,6 +493,11 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
        // wrap the name in the slot element
        if (this._nameSlot) {
          this._nameSlot.textContent = this.person.name;
+
+         if (this._nameSlot.nodeName === "A") {
+          fullNameEl.classList.add('no-bold');
+         }
+
          fullNameEl.appendChild(this._nameSlot);
        }
        else {
@@ -513,6 +534,12 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
        else {
          idEl.remove();
          hideSeparator = true;
+       }
+
+       // extra details
+       if (this._extraDetailsSlot) {
+        detailsEl.classList.add('extra-details');
+        detailsEl.appendChild(this._extraDetailsSlot);
        }
 
        // separator
