@@ -1,7 +1,7 @@
 {
   "name": "fs-person",
   "description": "Standard display of a persons sex, name, lifespan, and id for FamilySearch.",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "main": "fs-person.html",
   "author": {
     "name": "FamilySearch",
