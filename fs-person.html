@@ -529,8 +529,8 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
        }
 
        // id
-       if (this.person.id && !noIdAttr) {
-         idEl.textContent = this.person.id;
+       if ((this.person.id || this.person.personId) && !noIdAttr) {
+         idEl.textContent = this.person.personId || this.person.id;
        }
        else {
          idEl.remove();
