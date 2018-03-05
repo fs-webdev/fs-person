@@ -42,7 +42,8 @@ All properties are optional. Properties not passed in will not be displayed.
 * `familyName` - Family name of the person.
 * `sex` - Sex of the person (lowercase or uppercase). Defaults to `unknown`.
 * `lifespan` - Lifespan of the person.
-* `id` - Id of the person.
+* `id` - Person Id of the person
+* `personId` - Alternate property for displaying the person id.
 * `nameSystem` -  [eurotypic](http://bdespain.org/S&L/angs/glos/ngs-euro.htm) or [sinotypic](http://bdespain.org/S&L/angs/glos/ngs-sino.htm). Used in `orientation=portrait` to determine how a name should be displayed.
 * `portraitUrl` - URL of the image to display as the persons portrait.
 
