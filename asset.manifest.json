@@ -1,0 +1,5 @@
+{
+  "bowerFiles": [
+    "components/fs-dialog/get-root-node-polyfill.js",
+  ]
+}
