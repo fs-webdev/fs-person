@@ -1,0 +1,5 @@
+{
+  "bowerFiles": [
+    "components/fs-person/get-root-node-polyfill.js",
+  ]
+}
