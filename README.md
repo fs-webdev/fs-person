@@ -1,5 +1,6 @@
 <a href="https://codeclimate.com/repos/5a68a8d1fa63a2027d000069/maintainability"><img src="https://api.codeclimate.com/v1/badges/cddae7b40277d8a357ac/maintainability" /></a>
 <a href="https://codeclimate.com/repos/5a68a8d1fa63a2027d000069/test_coverage"><img src="https://api.codeclimate.com/v1/badges/cddae7b40277d8a357ac/test_coverage" /></a>
+[![Build Status](https://travis-ci.org/fs-webdev/fs-person.svg?branch=master)](https://travis-ci.org/fs-webdev/fs-person)
 
 # \<fs-person\>
 
