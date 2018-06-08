@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "functions": [
+    {
+      "name": "Node.prototype.getRootNode",
+      "description": "Returns the context object’s shadow-including root if options’s composed is true.\nReturns the context object’s root otherwise.\n\nThe root of an object is itself, if its parent is null, or else it is the root of its parent.\n\nThe shadow-including root of an object is its root’s host’s shadow-including root,\nif the object’s root is a shadow root, and its root otherwise.\n\nhttps://dom.spec.whatwg.org/#dom-node-getrootnode",
+      "summary": "",
+      "sourceRange": {
+        "file": "src/get-root-node-polyfill.js",
+        "start": {
+          "line": 20,
+          "column": 2
+        },
+        "end": {
+          "line": 24,
+          "column": 3
+        }
+      },
+      "privacy": "public",
+      "params": []
+    }
+  ]
+}
