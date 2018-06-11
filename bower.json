@@ -1,6 +1,6 @@
 {
   "name": "fs-person",
-  "description": "Standard display of a persons sex, name, lifespan, and id for FamilySearch.",
+  "description": "Styleguide component for standard display of a persons sex, name, lifespan, and id for FamilySearch.",
   "main": "fs-person.html",
   "author": {
     "name": "FamilySearch",
@@ -12,6 +12,7 @@
     "fs-globals": "fs-webdev/fs-globals#^1.2.0"
   },
   "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^3.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
     "web-component-tester": "t2ym/web-component-tester#6.0.0-wct6-plugin.1",
     "axe.min": "https://unpkg.com/axe-core/axe.min.js"
