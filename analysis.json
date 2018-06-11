@@ -1,12 +1,145 @@
 {
   "schema_version": "1.0.0",
+  "elements": [
+    {
+      "description": "## Overview\nStyleguide component for standard display of a persons sex, name, lifespan, and id for FamilySearch.\n\n ## Usage:\n \n ### Polymer:\n ```html\n <fs-person person=\"[[person]]\"></fs-person>\n ```\n\n ### Native:\n HTML:\n ```\n <fs-person id=\"person-el\"></fs-person>\n ```\n Javascript:\n ```\n const el = document.getElementById('person-el');\n el.person = {\n   name: 'John Doe',\n   sex: 'male',\n   lifespan: '1900–2000',\n   id: 'XKCD-123'\n };\n ```\n ## Slots\n\n You can pass a named slot as a child of `<fs-person>` and it will be used to wrap the persons name. This is useful if you need to make the persons name a link or a heading.\n\n ```html\n <fs-person person=\"[[person]]\">\n   <h3 slot=\"name\"></h3>\n </fs-person>\n ```\n\n You can also pass in an extra details element as a child of `<fs-person>` and it will be displayed beneath the person's displayed information. This is helpful if you need to add an extra line of information, such as if you want to include a link to let the user \"view [their] relationship\" with the person.\n\n ```html\n <fs-person>\n   <a href=\"#\" slot=\"extra-details\">View My Relationship</a>\n </fs-person>\n ```\n\n ## Attributes\n\n - `person` - The person object to display. Should be passed in via Polymer or `JSON.stringify`. See documentation in 'Properties' section.\n - `portrait` - Show the persons portrait. Will use `person.portraitUrl` as the src of the image, otherwise will default to displaying a portrait of the sex.\n - `theme` - Change the display theme. Values can be `normal` or `nightfall`. Defaults to `normal`.\n - `orientation` - Change the display orientation of the person. Values can be `landscape`, `portrait`, or `inline`. Defaults to `landscape`. `orientation=portrait` will automatically turn on the `portrait` attribute.\n - `icon-size` - Change the size of the sex icon. Values can be `small` or `medium`. Defaults to `medium`. If the attributes `portrait` or `orientation=inline` are set, this attribute will be ignored and the icon size will be set to `small`.\n - `no-sex` - Hide the persons sex.\n - `no-lifespan` - Hide the persons lifespan.\n - `no-id` - Hide the persons id.\n - `relation` - Show two persons as having a relationship by having two `<fs-person>` elements as siblings and adding the `relation` attribute to both. The value of the attribute should be `spouse1` for the first person, and `spouse2` for the second person.\n\n ```html\n <fs-person person=\"[[person1]]\" relation=\"spouse1\"></fs-person>\n <fs-person person=\"[[person2]]\" relation=\"spouse2\"></fs-person>\n ```\n\n\n The person object can be passed in though the `person` JavaScript property or though the `person` attribute via Polymer or `JSON.stringify`.\n\n ```html\n <fs-person person='{\"name\":\"John Doe\"}'></fs-person>\n ```\n\n ## Properties\n\n All properties are optional. Properties not passed in will not be displayed.\n\n - **person** - The person object. Can set this property instead of using the `person` attribute.\n\nProperties of person \n - `lang` - [ISO language code](https://www.w3schools.com/tags/ref_language_codes.asp) of the name. Will be used as the `lang` attribute on the name element. This allows screen readers to [properly pronounce the name](https://www.paciellogroup.com/blog/2016/06/using-the-html-lang-attribute/) when it's in a different language the pages.\n - `name` - Full name of the person. Defaults to `[Unknown Name]`.\n - `givenName` - Given name of the person. Defaults to `[Unknown Name]`.\n - `familyName` - Family name of the person.\n - `sex` - Sex of the person (lowercase or uppercase). Defaults to `unknown`.\n - `lifespan` - Lifespan of the person.\n - `id` - Person Id of the person\n - `personId` - Alternate property for displaying the person id.\n - `nameSystem` - [eurotypic](http://bdespain.org/S&L/angs/glos/ngs-euro.htm) or [sinotypic](http://bdespain.org/S&L/angs/glos/ngs-sino.htm). Used in `orientation=portrait` to determine how a name should be displayed.\n - `portraitUrl` - URL of the image to display as the persons portrait.",
+      "summary": "",
+      "path": "fs-person.html",
+      "properties": [],
+      "methods": [
+        {
+          "name": "attachedCallback",
+          "description": "Attached callback is added to make the element \"hybrid\", so it works in the V0 and V1 specs.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 410,
+              "column": 4
+            },
+            "end": {
+              "line": 412,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "connectedCallback",
+          "description": "Initialize the person and set initial state.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 417,
+              "column": 4
+            },
+            "end": {
+              "line": 482,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "attributeChangedCallback",
+          "description": "Listen to the person attribute.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 487,
+              "column": 5
+            },
+            "end": {
+              "line": 498,
+              "column": 6
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "attr"
+            },
+            {
+              "name": "oldValue"
+            },
+            {
+              "name": "newValue"
+            }
+          ]
+        },
+        {
+          "name": "_render",
+          "description": "Render the person object.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 503,
+              "column": 5
+            },
+            "end": {
+              "line": 642,
+              "column": 6
+            }
+          },
+          "metadata": {},
+          "params": []
+        }
+      ],
+      "staticMethods": [],
+      "demos": [
+        {
+          "url": "demo/index.html",
+          "description": ""
+        }
+      ],
+      "metadata": {},
+      "sourceRange": {
+        "start": {
+          "line": 401,
+          "column": 2
+        },
+        "end": {
+          "line": 644,
+          "column": 3
+        }
+      },
+      "privacy": "public",
+      "superclass": "HTMLElement",
+      "name": "FSPerson",
+      "attributes": [
+        {
+          "name": "person",
+          "description": "",
+          "sourceRange": {
+            "start": {
+              "line": 404,
+              "column": 14
+            },
+            "end": {
+              "line": 404,
+              "column": 22
+            }
+          },
+          "metadata": {}
+        }
+      ],
+      "events": [],
+      "styling": {
+        "cssVariables": [],
+        "selectors": []
+      },
+      "slots": [],
+      "tagname": "fs-person"
+    }
+  ],
   "functions": [
     {
       "name": "Node.prototype.getRootNode",
       "description": "Returns the context object’s shadow-including root if options’s composed is true.\nReturns the context object’s root otherwise.\n\nThe root of an object is itself, if its parent is null, or else it is the root of its parent.\n\nThe shadow-including root of an object is its root’s host’s shadow-including root,\nif the object’s root is a shadow root, and its root otherwise.\n\nhttps://dom.spec.whatwg.org/#dom-node-getrootnode",
       "summary": "",
       "sourceRange": {
-        "file": "src/get-root-node-polyfill.js",
+        "file": "get-root-node-polyfill.js",
         "start": {
           "line": 20,
           "column": 2
