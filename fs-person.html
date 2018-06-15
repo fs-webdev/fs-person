@@ -402,7 +402,7 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
   class FSPerson extends HTMLElement {
 
     static get observedAttributes() {
-      return ['person'];
+      return ['orientation', 'icon-size', 'portrait', 'no-sex', 'no-lifespan', 'no-id', 'person'];
     }
 
     /*
@@ -431,6 +431,9 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
 
       // accept child name element wrapper
       this._nameSlot = this.querySelector('[slot="name"]');
+
+      // accept pid element wrapper
+      this._pidSlot = this.querySelector('[slot="pid"]');
 
       // accept extra content for the details section
       this._extraDetailsSlot = this.querySelector('[slot="extra-details"]');
@@ -492,9 +495,11 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
          try {
            this.person = JSON.parse(newValue);
          }
-         catch (e) {
-           // ?
+         catch (err) {
+           console.error('There was a problem with the person value in the person attribute:', err)
          }
+       } else {
+         this._render();
        }
      }
 
@@ -621,8 +626,13 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
 
        // id
        if ((this.person.id || this.person.personId) && !noIdAttr) {
-         idEl.textContent = this.person.personId || this.person.id;
-       }
+        if (this._pidSlot) {
+           this._pidSlot.textContent = this.person.personId || this.person.id;
+           idEl.appendChild(this._pidSlot);
+         } else {
+           idEl.textContent = this.person.personId || this.person.id;
+         }
+       } 
        else {
          idEl.remove();
          hideSeparator = true;
