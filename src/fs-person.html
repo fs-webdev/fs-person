@@ -345,6 +345,14 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
   *  </fs-person>
   *  ```
   *
+  *  You can pass a named slot as a child of `<fs-person>` and it will be used to wrap the persons id. This is useful if you need to make the persons id a link or a button.
+  *
+  *  ```html
+  *  <fs-person person="[[person]]">
+  *    <a href="#" slot="pid"></a>
+  *  </fs-person>
+  *  ```
+  *
   *  You can also pass in an extra details element as a child of `<fs-person>` and it will be displayed beneath the person's displayed information. This is helpful if you need to add an extra line of information, such as if you want to include a link to let the user "view [their] relationship" with the person.
   *
   *  ```html
