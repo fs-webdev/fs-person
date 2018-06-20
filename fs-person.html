@@ -437,14 +437,8 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
         root.appendChild(styles);
       }
 
-      // accept child name element wrapper
-      this._nameSlot = this.querySelector('[slot="name"]');
-
-      // accept pid element wrapper
-      this._pidSlot = this.querySelector('[slot="pid"]');
-
-      // accept extra content for the details section
-      this._extraDetailsSlot = this.querySelector('[slot="extra-details"]');
+      // Save slots in local memory so they can be distributed later.
+      this._checkToSaveSlots();
 
       // save initial state of person before creating the property
       var person = this.person;
@@ -498,6 +492,8 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
      */
      attributeChangedCallback(attr, oldValue, newValue) {
 
+       this._checkToSaveSlots();
+
        // accept person json attribute value
        if (attr === 'person') {
          try {
@@ -519,9 +515,8 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
 
        // clear out old DOM
        this.innerHTML = '';
-
        var clone = document.importNode(template.content, true);
-       var sex = this.person.sex.toLowerCase();
+       var sex = (this.person.sex && this.person.sex.toLowerCase()) || "unknown";
        var hideSeparator = false;  // separator should be hidden if lifespan or id is hidden
 
        // selectors
@@ -659,7 +654,20 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
 
        this.appendChild(clone);
      }
-
+     
+     /**
+      * Method for checking to see if slots have been populated yet and populate them if they haven't been.
+      */
+     _checkToSaveSlots() {
+       if (this.querySelector('[slot]') && !(this._nameSlot || this._pidSlot || this._extraDetailsSlot)) {
+         // accept child name element wrapper
+         this._nameSlot = this.querySelector('[slot="name"]');
+         // accept pid element wrapper
+         this._pidSlot = this.querySelector('[slot="pid"]');
+         // accept extra content for the details section
+         this._extraDetailsSlot = this.querySelector('[slot="extra-details"]');
+       }
+     }
   }
 
 /**
