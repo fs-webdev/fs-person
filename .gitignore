@@ -8,3 +8,5 @@ node_modules
 npm-debug.log
 coverage
 wct.log
+analysis.json
+.idea/*
