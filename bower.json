@@ -1,5 +1,6 @@
 {
   "name": "fs-person",
+  "version": "4.0.0",
   "description": "Styleguide component for standard display of a persons sex, name, lifespan, and id for FamilySearch.",
   "main": "fs-person.html",
   "author": {
