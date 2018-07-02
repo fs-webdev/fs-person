@@ -1,5 +1,6 @@
 {
   "name": "fs-person",
+  "version": "4.0.0",
   "description": "Styleguide component for standard display of a persons sex, name, lifespan, and id for FamilySearch.",
   "main": "fs-person.html",
   "author": {
@@ -8,8 +9,8 @@
   },
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "fs-styles": "fs-webdev/fs-styles#^3.x.x",
-    "fs-globals": "fs-webdev/fs-globals#^1.2.0"
+    "fs-styles": "fs-webdev/fs-styles#^4.4.0",
+    "fs-globals": "fs-webdev/fs-globals#^3.0.7"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^3.0.0",
