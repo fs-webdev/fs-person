@@ -9,8 +9,7 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "fs-styles": "fs-webdev/fs-styles#^3.x.x",
-    "fs-globals": "fs-webdev/fs-globals#^1.2.0",
-    "polymer": "Polymer/polymer#1 - 2"
+    "fs-globals": "fs-webdev/fs-globals#^1.2.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^3.0.0",
