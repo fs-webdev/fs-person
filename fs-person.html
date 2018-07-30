@@ -454,11 +454,6 @@ fs-person[relation="spouse2"] .fs-person__sex:before {
             // set defaults
             this._person.sex = this._person.sex || 'unknown';
 
-            // safely decode user generated values
-            this._person.name = FS.htmlDecode(this._person.name);
-            this._person.familyName = FS.htmlDecode(this._person.familyName);
-            this._person.givenName = FS.htmlDecode(this._person.givenName);
-
             // treat names with only whitespace characters as empty
             this._person.name = (this.person.name && this.person.name.trim() ?
               this.person.name.trim() :
