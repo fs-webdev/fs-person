@@ -141,18 +141,6 @@
           expect(el.person.givenName).to.equal('[Unknown Name]');
         });
 
-        it('should render encoded names correctly', function() {
-          person.name = 'Angelo &quot;Snaps&quot; Provolone';
-          person.givenName = 'Angelo &quot;Snaps&quot;'
-          person.familyName = 'Provolone';
-
-          setPerson();
-
-          expect(fullNameEl.textContent).to.equal('Angelo "Snaps" Provolone');
-          expect(givenNameEl.textContent).to.equal('Angelo "Snaps"');
-          expect(familyNameEl.textContent).to.equal('Provolone');
-        });
-
         it('should add the lang to the name if it doesn\'t match current language', function() {
           person.lang = 'de';
 
