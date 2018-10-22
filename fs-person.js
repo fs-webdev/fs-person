@@ -1,0 +1,679 @@
+import 'fs-globals/fs-globals.js'
+import './get-root-node-polyfill.js'
+
+// 1. Add the sex of the person as an element in the DOM so screen readers can
+//    can hear it when navigating line by line
+// 2. The visually hidden, zero-width space element at the end is used to prevent
+//    the id from adding a newline character at the end of the clipboard when
+//    copied (cannot be display:none). Without the aria-hidden attribute, screen
+//    readers would read the character
+
+const fsPersonStylesTemplate = document.createElement('template');
+fsPersonStylesTemplate.setAttribute('style', 'display: none;');
+fsPersonStylesTemplate.innerHTML = `
+  <style data-fs-person>
+  /*
+   * 1. Use flex to allow portrait and vitals to vertically center with one another
+   * 2. Don't use flex for vital information as it will add a newline character after
+   *    every flex-item
+   *    @see https://stackoverflow.com/questions/27970957/flexbox-adding-newline-to-clipboard
+   * 3. In CJK languages the person name should not be bold because it makes the
+   *    characters harder to read.
+   * 4. Use table-cells instead of floats so we can make only the lifespan truncate
+   *    and not the id while still allowing triple click to select the id
+   * 5. Don't let the id truncate or wrap
+   * 6. CSS trick to have a table column truncate text without using width or max-width
+   *    which would case the column to take up as much space as possible on the screen
+   *    @see http://stackoverflow.com/a/19757393/2124254
+   * 7. Given name and family name are only used in portrait orientation
+   * 8. Let the image grow to the size of the portrait container so the container can
+   *    be resized by external css
+   * 9. Make the height of the lifespan equal to the line-height so that when just the
+   *    lifespan is displayed the line takes up space (since it's positioned absolutely)
+   */
+  fs-person {
+    display: flex; /* [1] */
+    width: 100%;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .fs-person__vitals {
+    position: relative;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .fs-person__sex {
+    position: absolute;
+    top: 9px;
+  }
+
+  .fs-person__sex[class*=fs-icon-medium] {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .fs-person__sex ~ .fs-person__name,
+  .fs-person__sex ~ .fs-person__details {
+    padding-left: 20px;
+  }
+
+  .fs-person__sex[class*=fs-icon-medium] ~ .fs-person__name,
+  .fs-person__sex[class*=fs-icon-medium] ~ .fs-person__details {
+    padding-left: 30px;
+  }
+
+  .fs-person__name {
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .fs-person__full-name.no-bold {
+    font-weight: normal;
+  }
+
+  .fs-person__given-name,
+  .fs-person__family-name {
+    display: none; /* [7] */
+  }
+
+  [lang=zh] .fs-person__name,
+  [lang=ja] .fs-person__name,
+  [lang=ko] .fs-person__name {
+    font-weight: normal; /* [3] */
+  }
+
+  .fs-person__details {
+    font-size: 12px;
+    font-size: var(--fs-font-size-small, 12px);
+    height: 1.35rem;
+    height: var(--fs-line-height-small, 1.35rem);
+    line-height: 1.35rem; /* [9] */
+    line-height: var(--fs-line-height-small, 1.35rem);
+  }
+
+  .fs-person__details.extra-details {
+    height: initial;
+  }
+
+  .fs-person__lifespan,
+  .fs-person__separator,
+  .fs-person__id {
+    display: table-cell; /* [2,4] */
+  }
+
+  .fs-person__separator,
+  .fs-person__id {
+    white-space: nowrap; /* [5] */
+  }
+
+  .fs-person__lifespan {
+    position: relative; /* [6] */
+  }
+
+  /* [6] */
+  .fs-person__lifespan:after {
+    content: attr(data-lifespan);
+    display: inline-block;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .fs-person__lifespan span {
+    position: absolute;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .fs-person__portrait.fs-icon {
+    background-color: #f4f4f4;
+    background-color: var(--fs-color-grey-background-light, #f4f4f4);
+    background-size: 60%;
+    border: 4px solid #d9d9d9;
+    border-radius: 50%;
+    margin-right: 20px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+
+  .fs-person__image {
+    max-width: 100%; /* [8] */
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+  }
+
+
+
+
+
+  /** INLINE **/
+  /*
+   * 1. make the name shrink at a very low rate compared to the lifespan (magic number)
+   */
+  fs-person[orientation="inline"] .fs-person__portrait {
+    display: none;
+  }
+
+  fs-person[orientation="inline"] .fs-person__vitals {
+    display: flex;
+  }
+
+  fs-person[orientation="inline"] .fs-person__name {
+    flex-shrink: 1; /* [1] */
+    margin-right: 30px;
+  }
+
+  fs-person[orientation="inline"] .fs-person__details {
+    padding-left: 0;
+    flex-shrink: 10000; /* [1] */
+  }
+
+
+
+
+
+  /** PORTRAIT **/
+  /*
+   * 1. sinotypic names will still use the full name instead of the given-name and family-name
+   */
+  fs-person[orientation="portrait"] {
+    display: block;
+    text-align: center;
+  }
+
+  fs-person[orientation="portrait"] .fs-person__portrait {
+    margin: 0 auto 10px;
+  }
+
+  /* [1] */
+  fs-person[orientation="portrait"] .fs-person__sex,
+  fs-person[orientation="portrait"] .fs-person__name:not(.fs-person__name--sinotypic) .fs-person__full-name {
+    display: none;
+  }
+
+  fs-person[orientation="portrait"] .fs-person__name:not(.fs-person__name--sinotypic) .fs-person__given-name,
+  fs-person[orientation="portrait"] .fs-person__name:not(.fs-person__name--sinotypic) .fs-person__family-name {
+    display: block;
+    line-height: 1.5rem;
+  }
+
+  fs-person[orientation="portrait"] .fs-person__vitals .fs-person__name,
+  fs-person[orientation="portrait"] .fs-person__vitals .fs-person__details {
+    padding-left: 0;
+  }
+
+  fs-person[orientation="portrait"] .fs-person__details {
+    margin-top: 5px;
+    display: inline-block;
+  }
+
+
+
+
+
+  /** THEME **/
+  fs-person[theme="nightfall"] {
+    color: #fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale
+  }
+
+  fs-person[theme="nightfall"] .fs-person__portrait {
+    background-color: #57585a;
+    border-color: #8c8d8f;
+  }
+
+  fs-person[theme="nightfall"] .fs-person__details {
+    color: #ecebea;
+    color: var(--fs-color-grey-background, #ecebea);
+  }
+
+
+
+
+
+  /** COUPLE **/
+  /*
+   * 1. use the sex element as the anchor for the connection line
+   * 2. allow connector to be seen due to overflow:hidden – 9px connector (width + border)
+   * 3. large number that would go outside the overflow of the person
+   */
+  fs-person[relation="spouse1"],
+  fs-person[relation="spouse2"] {
+    /* [2] */
+    margin-left: -9px;
+    padding-left: 9px;
+    overflow: hidden;
+  }
+
+  /* [1] */
+  fs-person[relation="spouse1"] .fs-person__sex:before,
+  fs-person[relation="spouse2"] .fs-person__sex:before  {
+    content: '';
+    width: 8px;
+    height: 150px; /* [3] */
+    border: 1px solid currentcolor;
+    border-right: 0;
+    position: absolute;
+    right: 100%
+  }
+
+  fs-person[relation="spouse2"] {
+    padding-top: 5px;
+  }
+
+  fs-person[relation="spouse1"] .fs-person__sex:before {
+    border-bottom: 0;
+    top: 50%;
+  }
+
+  fs-person[relation="spouse2"] .fs-person__sex:before {
+    border-top: 0;
+    bottom: 50%;
+  }
+  </style>
+`
+const fsPersonTemplate = document.createElement('template');
+fsPersonTemplate.setAttribute('style', 'display: none;');
+fsPersonTemplate.innerHTML = `
+  <div class="fs-person__portrait fs-icon">
+    <img class="fs-person__image" alt="" src="" data-test="portrait">
+  </div>
+  <div class="fs-person__vitals">
+    <div class="fs-person__sex fs-icon">
+      <span class="visually-hidden" data-test="sex"></span>
+    </div>
+    <div class="fs-person__name">
+      <span class="fs-person__given-name" data-test="given-name"></span>
+      <span class="fs-person__family-name" data-test="family-name"></span>
+      <span class="fs-person__full-name" data-test="full-name"></span>
+    </div>
+    <div class="fs-person__details">
+      <span class="fs-person__lifespan" data-test="lifespan"><span aria-hidden="true"></span></span>
+      <span class="fs-person__separator">&nbsp;•&nbsp;</span>
+      <span class="fs-person__id" data-test="pid"></span>
+      <span class="visually-hidden" aria-hidden="true">​&#8203;</span>
+    </div>
+  </div>
+`;
+
+FS._registerTranslations({"de":{"_LRM_PKTAG631":"fs-person_1_146 - FULL-FILE","fs.shared.fsPerson.FEMALE":"weiblich","fs.shared.fsPerson.MALE":"männlich","fs.shared.fsPerson.UNKNOWN":"Geschlecht unbekannt","fs.shared.fsPerson.UNKNOWN_NAME":"[Unbekannter Name]"},"en":{"fs.shared.fsPerson.UNKNOWN_NAME":"[Unknown Name]","fs.shared.fsPerson.MALE":"Male","fs.shared.fsPerson.FEMALE":"Female","fs.shared.fsPerson.UNKNOWN":"Sex Unknown"},"eo":{"fs.shared.fsPerson.FEMALE":"[Ƒéɱåļé----- П國カ내]","fs.shared.fsPerson.MALE":"[Ṁåļé- П國カ내]","fs.shared.fsPerson.UNKNOWN":"[Šéẋ Ûñķñöŵñ---- П國カ내]","fs.shared.fsPerson.UNKNOWN_NAME":"[[Ûñķñöŵñ Ñåɱé]------- П國カ내]"},"es":{"_LRM_PKTAG145":"fs-person_1_101 - FULL-FILE","fs.shared.fsPerson.FEMALE":"Mujer","fs.shared.fsPerson.MALE":"Hombre","fs.shared.fsPerson.UNKNOWN":"Sexo desconocido","fs.shared.fsPerson.UNKNOWN_NAME":"[Nombre desconocido]"},"fr":{"_LRM_PKTAG571":"fs-person_1_102 - FULL-FILE","fs.shared.fsPerson.FEMALE":"Femme","fs.shared.fsPerson.MALE":"Homme","fs.shared.fsPerson.UNKNOWN":"Sexe inconnu","fs.shared.fsPerson.UNKNOWN_NAME":"[Nom inconnu]"},"it":{"_LRM_PKTAG987":"fs-person_1_103 - FULL-FILE","fs.shared.fsPerson.FEMALE":"Femmina","fs.shared.fsPerson.MALE":"Maschio","fs.shared.fsPerson.UNKNOWN":"Sesso sconosciuto","fs.shared.fsPerson.UNKNOWN_NAME":"[Nome sconosciuto]"},"ja":{"_LRM_PKTAG688":"fs-person_1_104 - FULL-FILE","fs.shared.fsPerson.FEMALE":"女性","fs.shared.fsPerson.MALE":"男性","fs.shared.fsPerson.UNKNOWN":"性別不明","fs.shared.fsPerson.UNKNOWN_NAME":"〔不明な名前〕"},"ko":{"_LRM_PKTAG400":"fs-person_1_105 - FULL-FILE","fs.shared.fsPerson.FEMALE":"여성","fs.shared.fsPerson.MALE":"남성","fs.shared.fsPerson.UNKNOWN":"성별 미상","fs.shared.fsPerson.UNKNOWN_NAME":"[이름 미상]"},"pt":{"_LRM_PKTAG480":"fs-person_1_106 - FULL-FILE","fs.shared.fsPerson.FEMALE":"Feminino","fs.shared.fsPerson.MALE":"Masculino","fs.shared.fsPerson.UNKNOWN":"Sexo desconhecido","fs.shared.fsPerson.UNKNOWN_NAME":"[Nome desconhecido]"},"ru":{"_LRM_PKTAG394":"fs-person_1_107 - FULL-FILE","fs.shared.fsPerson.FEMALE":"Женский","fs.shared.fsPerson.MALE":"Мужской","fs.shared.fsPerson.UNKNOWN":"Пол неизвестен","fs.shared.fsPerson.UNKNOWN_NAME":"[Неизвестное имя]"},"zh":{"_LRM_PKTAG240":"fs-person_1_108 - FULL-FILE","fs.shared.fsPerson.FEMALE":"女","fs.shared.fsPerson.MALE":"男","fs.shared.fsPerson.UNKNOWN":"性別不詳","fs.shared.fsPerson.UNKNOWN_NAME":"〔姓名不詳〕"}});
+
+var VALID_ICON_SIZES = ['medium', 'small'];
+var DEFAULT_ICON_SIZE = VALID_ICON_SIZES[0];
+
+
+/**
+* ## Overview
+* Styleguide component for standard display of a persons sex, name, lifespan, and id for FamilySearch.
+*
+*  ## Usage:
+*
+*  ### Polymer:
+*  ```html
+*  <fs-person person="[[person]]"></fs-person>
+*  ```
+*
+*  ### Native:
+*  HTML:
+*  ```
+*  <fs-person id="person-el"></fs-person>
+*  ```
+*  Javascript:
+*  ```
+*  const el = document.getElementById('person-el');
+*  el.person = {
+*    name: 'John Doe',
+*    sex: 'male',
+*    lifespan: '1900–2000',
+*    id: 'XKCD-123'
+*  };
+*  ```
+*  ## Slots
+*
+*  You can pass a named slot as a child of `<fs-person>` and it will be used to wrap the persons name. This is useful if you need to make the persons name a link or a heading.
+*
+*  ```html
+*  <fs-person person="[[person]]">
+*    <h3 slot="name"></h3>
+*  </fs-person>
+*  ```
+*
+*  You can pass a named slot as a child of `<fs-person>` and it will be used to wrap the persons id. This is useful if you need to make the persons id a link or a button.
+*
+*  ```html
+*  <fs-person person="[[person]]">
+*    <a href="#" slot="pid"></a>
+*  </fs-person>
+*  ```
+*
+*  You can also pass in an extra details element as a child of `<fs-person>` and it will be displayed beneath the person's displayed information. This is helpful if you need to add an extra line of information, such as if you want to include a link to let the user "view [their] relationship" with the person.
+*
+*  ```html
+*  <fs-person>
+*    <a href="#" slot="extra-details">View My Relationship</a>
+*  </fs-person>
+*  ```
+*
+*  ## Attributes
+*
+*  - `person` - The person object to display. Should be passed in via Polymer or `JSON.stringify`. See documentation in 'Properties' section.
+*  - `portrait` - Show the persons portrait. Will use `person.portraitUrl` as the src of the image, otherwise will default to displaying a portrait of the sex.
+*  - `theme` - Change the display theme. Values can be `normal` or `nightfall`. Defaults to `normal`.
+*  - `orientation` - Change the display orientation of the person. Values can be `landscape`, `portrait`, or `inline`. Defaults to `landscape`. `orientation=portrait` will automatically turn on the `portrait` attribute.
+*  - `icon-size` - Change the size of the sex icon. Values can be `small` or `medium`. Defaults to `medium`. If the attributes `portrait` or `orientation=inline` are set, this attribute will be ignored and the icon size will be set to `small`.
+*  - `no-sex` - Hide the persons sex.
+*  - `no-lifespan` - Hide the persons lifespan.
+*  - `no-id` - Hide the persons id.
+*  - `relation` - Show two persons as having a relationship by having two `<fs-person>` elements as siblings and adding the `relation` attribute to both. The value of the attribute should be `spouse1` for the first person, and `spouse2` for the second person.
+*
+*  ```html
+*  <fs-person person="[[person1]]" relation="spouse1"></fs-person>
+*  <fs-person person="[[person2]]" relation="spouse2"></fs-person>
+*  ```
+*
+*
+*  The person object can be passed in though the `person` JavaScript property or though the `person` attribute via Polymer or `JSON.stringify`.
+*
+*  ```html
+*  <fs-person person='{"name":"John Doe"}'></fs-person>
+*  ```
+*
+*  ## Properties
+*
+*  All properties are optional. Properties not passed in will not be displayed.
+*
+*  - **person** - The person object. Can set this property instead of using the `person` attribute.
+*
+* Properties of person
+*  - `lang` - [ISO language code](https://www.w3schools.com/tags/ref_language_codes.asp) of the name. Will be used as the `lang` attribute on the name element. This allows screen readers to [properly pronounce the name](https://www.paciellogroup.com/blog/2016/06/using-the-html-lang-attribute/) when it's in a different language the pages.
+*  - `name` - Full name of the person. Defaults to `[Unknown Name]`.
+*  - `givenName` - Given name of the person. Defaults to `[Unknown Name]`.
+*  - `familyName` - Family name of the person.
+*  - `sex` - Sex of the person (lowercase or uppercase). Defaults to `unknown`.
+*  - `lifespan` - Lifespan of the person.
+*  - `id` - Person Id of the person
+*  - `personId` - Alternate property for displaying the person id.
+*  - `nameSystem` - [eurotypic](http://bdespain.org/S&L/angs/glos/ngs-euro.htm) or [sinotypic](http://bdespain.org/S&L/angs/glos/ngs-sino.htm). Used in `orientation=portrait` to determine how a name should be displayed.
+*  - `portraitUrl` - URL of the image to display as the persons portrait.
+*
+*
+* @demo demo/index.html
+*
+*/
+class FSPerson extends HTMLElement {
+
+  static get observedAttributes() {
+    return ['orientation', 'icon-size', 'portrait', 'no-sex', 'no-lifespan', 'no-id', 'person'];
+  }
+
+  /*
+   * Attached callback is added to make the element "hybrid", so it works in the V0 and V1 specs.
+   */
+  attachedCallback() {
+    this.connectedCallback();
+  }
+
+  /**
+   * Initialize the person and set initial state.
+   */
+  connectedCallback() {
+    var root = this.getRootNode();
+
+    // In polyfilled browsers there is no shadow DOM so global styles still style
+    // the "fake" shadow DOM. We need to test for truly native support so we know
+    // when to inject styles into the shadow DOM. The best way I've found to do that
+    // is to test the toString output of a shadowroot since `instanceof ShadowRoot`
+    // returns true when it's just a document-fragment in polyfilled browsers
+    // @see https://stackoverflow.com/questions/45068560/using-a-non-shadow-dom-custom-element-both-inside-and-outside-the-shadow-dom
+    let clone = document.importNode(fsPersonStylesTemplate.content, true);
+    let styles = clone.querySelector('style');
+
+    if (root.toString() === '[object ShadowRoot]' && !root.querySelector('style[data-fs-person]')) {
+      root.appendChild(styles);
+    } else if(!document.head.querySelector('style[data-fs-person]')){
+      document.head.appendChild(styles);
+    }
+
+    // Save slots in local memory so they can be distributed later.
+    this._checkToSaveSlots();
+
+    // save initial state of person before creating the property
+    var person = this.person;
+
+    Object.defineProperties(this, {
+      person: {
+        get: function() {
+          return this._person;
+        },
+        set: function(value) {
+          this._person = value;
+
+          // set defaults
+          this._person.sex = this._person.sex || 'unknown';
+
+          // treat names with only whitespace characters as empty
+          this._person.name = (this.person.name && this.person.name.trim() ?
+            this.person.name.trim() :
+            FS.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
+
+          this._person.familyName = (this.person.familyName && this.person.familyName.trim() ?
+            this.person.familyName.trim()
+            : null);
+
+          // set the given name to unknown name for portrait orientation
+          this._person.givenName = (this.person.givenName && this.person.givenName.trim() ?
+            this.person.givenName.trim() :
+            FS.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
+
+          this._render();
+        }
+      }
+    });
+
+    // set initial state
+    if (person) {
+      this.person = person;
+    }
+    else if (this.hasAttribute('person')) {
+      this.attributeChangedCallback('person', null, this.getAttribute('person'));
+    }
+  }
+
+  /**
+   * Listen to the person attribute.
+   */
+   attributeChangedCallback(attr, oldValue, newValue) {
+
+     this._checkToSaveSlots();
+
+     // accept person json attribute value
+     if (attr === 'person') {
+       try {
+         this.person = JSON.parse(newValue);
+       }
+       catch (err) {
+         console.error('There was a problem with the person value in the person attribute:', err)
+       }
+     } else {
+       this._render();
+     }
+   }
+
+   /**
+    * Render the person object.
+    */
+   _render() {
+     if (!this.person) return;
+
+     // clear out old DOM
+     this.innerHTML = '';
+     var clone = document.importNode(fsPersonTemplate.content, true);
+     var sex = (this.person.sex && this.person.sex.toLowerCase()) || "unknown";
+     var hideSeparator = false;  // separator should be hidden if lifespan or id is hidden
+
+     // selectors
+     var detailsEl = clone.querySelector('.fs-person__details');
+     var portraitEl = clone.querySelector('.fs-person__portrait');
+     var imageEl = clone.querySelector('.fs-person__image');
+     var sexEl = clone.querySelector('.fs-person__sex');
+     var nameEl = clone.querySelector('.fs-person__name');
+     var fullNameEl = clone.querySelector('.fs-person__full-name');
+     var familyNameEl = clone.querySelector('.fs-person__family-name');
+     var givenNameEl = clone.querySelector('.fs-person__given-name');
+     var lifespanEl = clone.querySelector('.fs-person__lifespan');
+     var separatorEl = clone.querySelector('.fs-person__separator');
+     var idEl = clone.querySelector('.fs-person__id');
+
+     // attributes
+     var orientationAttr = this.getAttribute('orientation');
+     var iconSizeAttr = this.getAttribute('icon-size');
+     var portraitAttr = this.hasAttribute('portrait');
+     var noSexAttr = this.hasAttribute('no-sex');
+     var noLifespanAttr = this.hasAttribute('no-lifespan');
+     var noIdAttr = this.hasAttribute('no-id');
+
+     //clear out set classes
+     fullNameEl.classList.remove('no-bold');
+     detailsEl.classList.remove('extra-details');
+
+     // portrait
+     if (portraitAttr || orientationAttr === 'portrait') {
+       portraitEl.classList.add('fs-icon-large-' + sex);
+
+       // portrait url has content
+       if (this.person.portraitUrl) {
+         imageEl.setAttribute('src', this.person.portraitUrl);
+       }
+       else {
+         imageEl.remove();
+       }
+     }
+     else {
+       portraitEl.remove();
+     }
+
+     // sex
+     if (this.person.sex && !this.hasAttribute('no-sex')) {
+       var iconSize = DEFAULT_ICON_SIZE
+
+       // never allow a medium sex icon if the portrait is showing or when inline
+       if (portraitAttr || orientationAttr === 'inline') {
+         iconSize = 'small';
+       }
+       else if (VALID_ICON_SIZES.indexOf(iconSizeAttr) !== -1) {
+         iconSize = iconSizeAttr;
+       }
+
+       sexEl.classList.add('fs-icon-' + iconSize + '-' + sex);
+       sexEl.querySelector('span').textContent = FS.i18n('fs.shared.fsPerson.' + sex.toUpperCase());
+     }
+     else {
+       sexEl.remove();
+     }
+
+     // name lang attribute so screen readers know how to read the name
+     if (this.person.lang && this.person.lang !== FS.simpleLocale()) {
+       nameEl.setAttribute('lang', this.person.lang);
+     }
+
+     // name system
+     if (this.person.nameSystem) {
+       nameEl.classList.add('fs-person__name--' + this.person.nameSystem);
+     }
+
+     // full name
+     // wrap the name in the slot element
+     if (this._nameSlot) {
+       this._nameSlot.textContent = this.person.name;
+
+       if (this._nameSlot.nodeName === "A") {
+        fullNameEl.classList.add('no-bold');
+       }
+
+       fullNameEl.appendChild(this._nameSlot);
+     }
+     else {
+       fullNameEl.textContent = this.person.name;
+     }
+
+     // family name
+     if (this.person.familyName) {
+       familyNameEl.textContent = this.person.familyName;
+     }
+     else {
+       familyNameEl.remove();
+     }
+
+     // given name
+     givenNameEl.textContent = this.person.givenName;
+
+     // lifespan
+     if (this.person.lifespan && !noLifespanAttr) {
+       lifespanEl.querySelector('span').textContent = this.person.lifespan;
+
+       // set attribute for css hack to truncate lifespan
+       lifespanEl.setAttribute('data-lifespan', this.person.lifespan);
+     }
+     else {
+       lifespanEl.remove();
+       hideSeparator = true;
+     }
+
+     // id
+     if ((this.person.id || this.person.personId) && !noIdAttr) {
+      if (this._pidSlot) {
+         this._pidSlot.textContent = this.person.personId || this.person.id;
+         idEl.appendChild(this._pidSlot);
+       } else {
+         idEl.textContent = this.person.personId || this.person.id;
+       }
+     }
+     else {
+       idEl.remove();
+       hideSeparator = true;
+     }
+
+     // extra details
+     if (this._extraDetailsSlot) {
+      detailsEl.classList.add('extra-details');
+      detailsEl.appendChild(this._extraDetailsSlot);
+     }
+
+     // separator
+     if (hideSeparator) {
+       separatorEl.remove();
+     }
+
+     this.appendChild(clone);
+   }
+
+   /**
+    * Method for checking to see if slots have been populated yet and populate them if they haven't been.
+    */
+   _checkToSaveSlots() {
+     if (this.querySelector('[slot]') && !(this._nameSlot || this._pidSlot || this._extraDetailsSlot)) {
+       // accept child name element wrapper
+       this._nameSlot = this.querySelector('[slot="name"]');
+       // accept pid element wrapper
+       this._pidSlot = this.querySelector('[slot="pid"]');
+       // accept extra content for the details section
+       this._extraDetailsSlot = this.querySelector('[slot="extra-details"]');
+     }
+   }
+}
+
+/**
+* Register element using different methods for the V0 and V1 standards.
+*/
+if('customElements' in window){
+  customElements.define('fs-person', FSPerson);
+} else {
+  document.registerElement('fs-person', {prototype: Object.create(FSPerson.prototype)});
+}

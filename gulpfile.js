@@ -24,12 +24,12 @@ gulp.task('build', function(done) {
     // console.log(JSON.stringify(langObj,null,2));
     // done();
 
-    fs.readFile('./src/fs-person.html', 'utf-8', function(err, file) {
+    fs.readFile('./src/fs-person.js', 'utf-8', function(err, file) {
       if (err) done(err);
 
       file = file.replace('/* LANG CODE */', JSON.stringify(langObj));
 
-      fs.writeFile('./fs-person.html', file, 'utf-8', done);
+      fs.writeFile('./fs-person.js', file, 'utf-8', done);
     });
   });
 });

@@ -8,8 +8,9 @@
 
     <title>fs-person demo</title>
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel='import' href='../../fs-core-element/fs-core-element.html'>
+    <script src="../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../fs-person.js" type="module"></script>
+
     <style>
     .demo-snippet {
       margin-bottom: 60px;
@@ -166,8 +167,5 @@ Array.from(document.querySelectorAll('fs-person')).forEach(function(el) {
     </script>
     <script src="https://cdn.jsdelivr.net/prism/1.6.0/prism.js"></script>
 
-    <!-- by importing the element last, the code output script can run before it gets
-         populated -->
-    <link rel='import' href='../fs-person.html'>
   </body>
 </html>
