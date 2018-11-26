@@ -220,6 +220,15 @@
           expect(imageEl.getAttribute('src')).to.equal(person.portraitUrl);
         });
 
+        it('"portrait" should not show the image when portraitUrl equals "broken"', function() {
+          el.setAttribute('portrait', '');
+
+          person.portraitUrl = 'broken'; // This is a possible return value from /tree-data
+          setPerson();
+
+          expect(imageEl, 'imageEl is not null').to.equal(null);
+        });
+
         it('"portrait" should remove the image if portraitUrl is not passed in', function() {
           el.setAttribute('portrait', '');
           person.portraitUrl = null;
