@@ -559,7 +559,7 @@
          portraitEl.classList.add('fs-icon-large-' + sex);
 
          // portrait url has content
-         if (this.person.portraitUrl) {
+         if (this.person.portraitUrl && this.person.portraitUrl !== 'broken') { // Handle tree-data "broken" portraitURL person attribute. Don't show a broken image.
            imageEl.setAttribute('src', this.person.portraitUrl);
          }
          else {
