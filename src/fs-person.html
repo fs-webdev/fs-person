@@ -60,7 +60,7 @@
       top: calc(50% - (0.571rem / 2));
     }
 
-    .fs-person__sex[class*=fs-icon-medium] {
+    fs-person:not([wrap-name]) .fs-person__sex[class*=fs-icon-medium] {
       top: 50%;
       transform: translateY(-50%);
     }
@@ -77,6 +77,9 @@
 
     .fs-person__name {
       font-weight: bold;
+    }
+
+    fs-person:not([wrap-name]) .fs-person__name {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -158,8 +161,6 @@
       position: relative;
       z-index: 1;
     }
-
-
 
 
 
@@ -382,6 +383,7 @@
   *  - `no-sex` - Hide the persons sex.
   *  - `no-lifespan` - Hide the persons lifespan.
   *  - `no-id` - Hide the persons id.
+  *  - `wrap-name` - Enable this attribute to wrap the person's name. Defaults to being clipped with ellipses.
   *  - `relation` - Show two persons as having a relationship by having two `<fs-person>` elements as siblings and adding the `relation` attribute to both. The value of the attribute should be `spouse1` for the first person, and `spouse2` for the second person.
   *
   *  ```html
