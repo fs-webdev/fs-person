@@ -68,6 +68,10 @@
 <fs-person no-lifespan></fs-person>
 <h5>no-id</h5>
 <fs-person no-id></fs-person>
+<h5>wrap-name disabled (default)</h5>
+<fs-person class="wrap-name" style="width: 300px"></fs-person>
+<h5>wrap-name enabled</h5>
+<fs-person class="wrap-name" wrap-name style="width: 300px"></fs-person>
       </div>
     </div>
 
@@ -131,6 +135,17 @@
         nameSystem: 'sinotypic'
       };
 
+      var person3 = {
+        name: 'John Has a Super Long Name What Wraps on Small Widths Russel Robert de la Vega Antonio de Guerra Doe',
+        givenName: 'John',
+        familyName: 'Doe',
+        sex: 'MALE',
+        lifespan: '24 December 1970 - 24 May 1990',
+        id: 'XKCD-123',
+        nameSystem: 'eurotpyic',
+        portraitUrl: 'https://randomuser.me/api/portraits/men/90.jpg'
+      };
+
       // add automatic code output
       Array.from(document.querySelectorAll('.demo')).forEach(function(demo, index) {
         var code = demo.innerHTML
@@ -156,12 +171,17 @@ Array.from(document.querySelectorAll('fs-person')).forEach(function(el) {
       });
 
       // set people
-      var persons = document.querySelectorAll('fs-person:not([relation="spouse2"])');
+      var persons = document.querySelectorAll('fs-person:not([relation="spouse2"]):not(.wrap-name)');
       for (var i = 0; i < persons.length; i++) {
         persons[i].person = JSON.parse(JSON.stringify(person));
       }
 
       document.querySelector('fs-person[relation="spouse2"]').person = person2;
+
+      var persons = document.querySelectorAll('fs-person.wrap-name');
+      for (var i = 0; i < persons.length; i++) {
+        persons[i].person = JSON.parse(JSON.stringify(person3));
+      }
     })();
     </script>
     <script src="https://cdn.jsdelivr.net/prism/1.6.0/prism.js"></script>
