@@ -49,7 +49,7 @@
 
     .fs-person__sex {
       position: absolute;
-      top: 9px;
+      top: 6px;
     }
 
     fs-person[no-lifespan][no-id] .fs-person__details {
@@ -173,7 +173,7 @@
       display: none;
     }
 
-    fs-person[orientation="inline"] .fs-person__vitals, {
+    fs-person[orientation="inline"] .fs-person__vitals {
       display: flex;
     }
 
@@ -190,6 +190,7 @@
 
     fs-person[orientation="inline"] .fs-person__details {
       padding-left: 0;
+      padding-top: 2px;
       flex-shrink: 10000; /* [1] */
     }
 
@@ -199,14 +200,19 @@
 
     fs-person[orientation="inline-column"] .fs-person__full-name {
       display: block;
-      padding-top: 3px;
     }
 
     fs-person[orientation="inline-column"] .fs-person__sex ~ .fs-person__name {
       padding-left: 13px;
     }
+    
+    fs-person[orientation="inline-column"] .fs-person__separator {
+      display: none;
+    }
 
-
+    fs-person[orientation="inline-column"] .fs-person__lifespan {
+      display: block;
+    }
 
 
 
