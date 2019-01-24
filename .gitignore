@@ -9,3 +9,5 @@ npm-debug.log
 coverage
 wct.log
 .idea
+analysis.json
+package-lock.json

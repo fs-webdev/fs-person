@@ -49,7 +49,7 @@
 
     .fs-person__sex {
       position: absolute;
-      top: 9px;
+      top: 6px;
     }
 
     fs-person[no-lifespan][no-id] .fs-person__details {
@@ -168,7 +168,8 @@
     /*
      * 1. make the name shrink at a very low rate compared to the lifespan (magic number)
      */
-    fs-person[orientation="inline"] .fs-person__portrait {
+    fs-person[orientation="inline"] .fs-person__portrait,
+    fs-person[orientation="inline-column"] .fs-person__portrait {
       display: none;
     }
 
@@ -176,17 +177,42 @@
       display: flex;
     }
 
-    fs-person[orientation="inline"] .fs-person__name {
+    fs-person[orientation="inline-column"] .fs-person__vitals {
+      display: flex;
+      flex-direction: column;
+    }
+
+    fs-person[orientation="inline"] .fs-person__name,
+    fs-person[orientation="inline-column"] .fs-person__name {
       flex-shrink: 1; /* [1] */
       margin-right: 30px;
     }
 
     fs-person[orientation="inline"] .fs-person__details {
       padding-left: 0;
+      padding-top: 2px;
       flex-shrink: 10000; /* [1] */
     }
 
+    fs-person[orientation="inline-column"] .fs-person__details {
+      padding-left: 12px;
+    }
 
+    fs-person[orientation="inline-column"] .fs-person__full-name {
+      display: inline-block;
+    }
+
+    fs-person[orientation="inline-column"] .fs-person__sex ~ .fs-person__name {
+      padding-left: 13px;
+    }
+    
+    fs-person[orientation="inline-column"] .fs-person__separator {
+      display: none;
+    }
+
+    fs-person[orientation="inline-column"] .fs-person__lifespan {
+      display: block;
+    }
 
 
 
@@ -315,7 +341,7 @@
     </div>
   `;
 
-  FS._registerTranslations(/* LANG CODE */);
+  FS._registerTranslations({"de":{"_LRM_PKTAG631":"fs-person_1_146 - FULL-FILE","fs.shared.fsPerson.FEMALE":"weiblich","fs.shared.fsPerson.MALE":"männlich","fs.shared.fsPerson.UNKNOWN":"Geschlecht unbekannt","fs.shared.fsPerson.UNKNOWN_NAME":"[Unbekannter Name]"},"en":{"fs.shared.fsPerson.UNKNOWN_NAME":"[Unknown Name]","fs.shared.fsPerson.MALE":"Male","fs.shared.fsPerson.FEMALE":"Female","fs.shared.fsPerson.UNKNOWN":"Sex Unknown"},"eo":{"fs.shared.fsPerson.FEMALE":"[Ƒéɱåļé----- П國カ내]","fs.shared.fsPerson.MALE":"[Ṁåļé- П國カ내]","fs.shared.fsPerson.UNKNOWN":"[Šéẋ Ûñķñöŵñ---- П國カ내]","fs.shared.fsPerson.UNKNOWN_NAME":"[[Ûñķñöŵñ Ñåɱé]------- П國カ내]"},"es":{"_LRM_PKTAG145":"fs-person_1_101 - FULL-FILE","fs.shared.fsPerson.FEMALE":"Mujer","fs.shared.fsPerson.MALE":"Hombre","fs.shared.fsPerson.UNKNOWN":"Sexo desconocido","fs.shared.fsPerson.UNKNOWN_NAME":"[Nombre desconocido]"},"fr":{"_LRM_PKTAG571":"fs-person_1_102 - FULL-FILE","fs.shared.fsPerson.FEMALE":"Femme","fs.shared.fsPerson.MALE":"Homme","fs.shared.fsPerson.UNKNOWN":"Sexe inconnu","fs.shared.fsPerson.UNKNOWN_NAME":"[Nom inconnu]"},"it":{"_LRM_PKTAG987":"fs-person_1_103 - FULL-FILE","fs.shared.fsPerson.FEMALE":"Femmina","fs.shared.fsPerson.MALE":"Maschio","fs.shared.fsPerson.UNKNOWN":"Sesso sconosciuto","fs.shared.fsPerson.UNKNOWN_NAME":"[Nome sconosciuto]"},"ja":{"_LRM_PKTAG688":"fs-person_1_104 - FULL-FILE","fs.shared.fsPerson.FEMALE":"女性","fs.shared.fsPerson.MALE":"男性","fs.shared.fsPerson.UNKNOWN":"性別不明","fs.shared.fsPerson.UNKNOWN_NAME":"〔不明な名前〕"},"ko":{"_LRM_PKTAG400":"fs-person_1_105 - FULL-FILE","fs.shared.fsPerson.FEMALE":"여성","fs.shared.fsPerson.MALE":"남성","fs.shared.fsPerson.UNKNOWN":"성별 미상","fs.shared.fsPerson.UNKNOWN_NAME":"[이름 미상]"},"pt":{"_LRM_PKTAG480":"fs-person_1_106 - FULL-FILE","fs.shared.fsPerson.FEMALE":"Feminino","fs.shared.fsPerson.MALE":"Masculino","fs.shared.fsPerson.UNKNOWN":"Sexo desconhecido","fs.shared.fsPerson.UNKNOWN_NAME":"[Nome desconhecido]"},"ru":{"_LRM_PKTAG394":"fs-person_1_107 - FULL-FILE","fs.shared.fsPerson.FEMALE":"Женский","fs.shared.fsPerson.MALE":"Мужской","fs.shared.fsPerson.UNKNOWN":"Пол неизвестен","fs.shared.fsPerson.UNKNOWN_NAME":"[Неизвестное имя]"},"zh":{"_LRM_PKTAG240":"fs-person_1_108 - FULL-FILE","fs.shared.fsPerson.FEMALE":"女","fs.shared.fsPerson.MALE":"男","fs.shared.fsPerson.UNKNOWN":"性別不詳","fs.shared.fsPerson.UNKNOWN_NAME":"〔姓名不詳〕"}});
 
   var VALID_ICON_SIZES = ['medium', 'small'];
   var DEFAULT_ICON_SIZE = VALID_ICON_SIZES[0];
@@ -577,7 +603,7 @@
          var iconSize = DEFAULT_ICON_SIZE
 
          // never allow a medium sex icon if the portrait is showing or when inline
-         if (portraitAttr || orientationAttr === 'inline') {
+         if (portraitAttr || ((orientationAttr || '').indexOf('inline') === 0)) {
            iconSize = 'small';
          }
          else if (VALID_ICON_SIZES.indexOf(iconSizeAttr) !== -1) {
