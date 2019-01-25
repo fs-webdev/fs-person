@@ -49,7 +49,7 @@
 
     .fs-person__sex {
       position: absolute;
-      top: 9px;
+      top: 6px;
     }
 
     fs-person[no-lifespan][no-id] .fs-person__details {
@@ -168,7 +168,8 @@
     /*
      * 1. make the name shrink at a very low rate compared to the lifespan (magic number)
      */
-    fs-person[orientation="inline"] .fs-person__portrait {
+    fs-person[orientation="inline"] .fs-person__portrait,
+    fs-person[orientation="inline-column"] .fs-person__portrait {
       display: none;
     }
 
@@ -176,17 +177,42 @@
       display: flex;
     }
 
-    fs-person[orientation="inline"] .fs-person__name {
+    fs-person[orientation="inline-column"] .fs-person__vitals {
+      display: flex;
+      flex-direction: column;
+    }
+
+    fs-person[orientation="inline"] .fs-person__name,
+    fs-person[orientation="inline-column"] .fs-person__name {
       flex-shrink: 1; /* [1] */
       margin-right: 30px;
     }
 
     fs-person[orientation="inline"] .fs-person__details {
       padding-left: 0;
+      padding-top: 2px;
       flex-shrink: 10000; /* [1] */
     }
 
+    fs-person[orientation="inline-column"] .fs-person__details {
+      padding-left: 12px;
+    }
 
+    fs-person[orientation="inline-column"] .fs-person__full-name {
+      display: inline-block;
+    }
+
+    fs-person[orientation="inline-column"] .fs-person__sex ~ .fs-person__name {
+      padding-left: 13px;
+    }
+    
+    fs-person[orientation="inline-column"] .fs-person__separator {
+      display: none;
+    }
+
+    fs-person[orientation="inline-column"] .fs-person__lifespan {
+      display: block;
+    }
 
 
 
@@ -577,7 +603,7 @@
          var iconSize = DEFAULT_ICON_SIZE
 
          // never allow a medium sex icon if the portrait is showing or when inline
-         if (portraitAttr || orientationAttr === 'inline') {
+         if (portraitAttr || ((orientationAttr || '').indexOf('inline') === 0)) {
            iconSize = 'small';
          }
          else if (VALID_ICON_SIZES.indexOf(iconSizeAttr) !== -1) {
