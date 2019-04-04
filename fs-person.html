@@ -205,7 +205,7 @@
     fs-person[orientation="inline-column"] .fs-person__sex ~ .fs-person__name {
       padding-left: 13px;
     }
-    
+
     fs-person[orientation="inline-column"] .fs-person__separator {
       display: none;
     }
@@ -506,10 +506,17 @@
               this.person.familyName.trim()
               : null);
 
-            // set the given name to unknown name for portrait orientation
             this._person.givenName = (this.person.givenName && this.person.givenName.trim() ?
-              this.person.givenName.trim() :
-              FS.i18n('fs.shared.fsPerson.UNKNOWN_NAME'));
+              this.person.givenName.trim()
+              : null);
+
+            // set the given name to unknown name for portrait orientation
+            // if the person's name is also set to unknown. This prevents us from
+            // setting a first name to unknown when a person is simply missing their
+            // first name (e.g. Mr. Doe)
+            this._person.givenName = (this.person.name === FS.i18n('fs.shared.fsPerson.UNKNOWN_NAME') ?
+              FS.i18n('fs.shared.fsPerson.UNKNOWN_NAME') :
+              this.person.givenName);
 
             this._render();
           }

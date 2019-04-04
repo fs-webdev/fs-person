@@ -118,6 +118,7 @@
           el.person = person;
 
           expect(el.person.name).to.equal('[Unknown Name]');
+          expect(el.person.givenName, 'givenName was not also set to "[Unknown Name]"').to.equal('[Unknown Name]');
         });
 
         it('should default name to "[Unknown Name]" if the name only contains whitespace', function() {
@@ -125,20 +126,21 @@
           el.person = person;
 
           expect(el.person.name).to.equal('[Unknown Name]');
+          expect(el.person.givenName, 'givenName was not also set to "[Unknown Name]"').to.equal('[Unknown Name]');
         });
 
-        it('should default given name to "[Unknown Name]" if not passed in', function() {
+        it('should default given name to null if not passed in', function() {
           person.givenName = null;
           el.person = person;
 
-          expect(el.person.givenName).to.equal('[Unknown Name]');
+          expect(el.person.givenName).to.equal(null);
         });
 
-        it('should default given name to "[Unknown Name]" if the name only contains whitespace', function() {
+        it('should default given name to null if the name only contains whitespace', function() {
           person.givenName = ' ';
           el.person = person;
 
-          expect(el.person.givenName).to.equal('[Unknown Name]');
+          expect(el.person.givenName).to.equal(null);
         });
 
         it('should add the lang to the name if it doesn\'t match current language', function() {
