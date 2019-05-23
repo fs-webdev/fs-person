@@ -230,13 +230,18 @@
     }
 
     /* [1] */
+    fs-person[orientation="portrait"] .fs-person__name.fs-person__name--sinotypic {
+      display: flex;
+      flex-direction: column-reverse;
+    }
+
     fs-person[orientation="portrait"] .fs-person__sex,
-    fs-person[orientation="portrait"] .fs-person__name:not(.fs-person__name--sinotypic) .fs-person__full-name {
+    fs-person[orientation="portrait"] .fs-person__name:not(.fs-person__name--single-line) .fs-person__full-name {
       display: none;
     }
 
-    fs-person[orientation="portrait"] .fs-person__name:not(.fs-person__name--sinotypic) .fs-person__given-name,
-    fs-person[orientation="portrait"] .fs-person__name:not(.fs-person__name--sinotypic) .fs-person__family-name {
+    fs-person[orientation="portrait"] .fs-person__name:not(.fs-person__name--single-line) .fs-person__given-name,
+    fs-person[orientation="portrait"] .fs-person__name:not(.fs-person__name--single-line) .fs-person__family-name {
       display: block;
       line-height: 1.5rem;
     }
@@ -632,6 +637,14 @@
        // name system
        if (this.person.nameSystem) {
          nameEl.classList.add('fs-person__name--' + this.person.nameSystem);
+       }
+
+       // Some languages always have their names displayed on a single line even in portrait mode
+       // https://almtools.ldschurch.org/fhconfluence/display/Product/TreeWeb%3A+Design%3A+Name+Form+Language+Support
+       if (this.person.lang) {
+         if (!this.person.lang.includes('Latn') && (['ja', 'ko', 'zh'].includes(this.person.lang.slice(0, 2)) )) {
+          nameEl.classList.add('fs-person__name--single-line');
+         }
        }
 
        // full name
