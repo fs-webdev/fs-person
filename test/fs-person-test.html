@@ -66,21 +66,20 @@
 
       beforeEach(function() {
         el = fixture('fs-person-fixture');
+        el.setAttribute('orientation', 'landscape');
+
         person = {
           name: 'John Doe',
           givenName: 'John',
           familyName: 'Doe',
+          namePrefix: 'Mr',
           sex: 'MALE',
           lifespan: '1900–2000',
           id: 'XKCD-123',
-          nameSystem: 'eruotipic',
+          nameSystem: 'eurotipic',
           portraitUrl: 'https://randomuser.me/api/portraits/men/15.jpg'
         };
       });
-
-
-
-
 
       describe('data', function() {
 
@@ -136,11 +135,43 @@
           expect(el.person.givenName).to.equal(null);
         });
 
+        it('should set givenName to namePrefix in portrait mode if no givenName', function () {
+          person.givenName = null;
+          el.setAttribute('orientation', 'portrait');
+          el.person = person;
+
+          expect(el.person.givenName).to.equal(person.namePrefix);
+        });
+
+        it('should set displayInEurotypicOrder if in sinotypic mode, portrait mode and no givenName', function () {
+          person.givenName = null;
+          person.nameSystem = 'sinotypic';
+          el.setAttribute('orientation', 'portrait');
+          el.person = person;
+
+          expect(el.person.displayInEurotypicOrder).to.equal(true);
+        });
+
+        it('should set displayInEurotypicOrder to false in eurotypic mode, portrait mode and no givenName', function () {
+          person.givenName = null;
+          el.setAttribute('orientation', 'portrait');
+          el.person = person;
+
+          expect(el.person.displayInEurotypicOrder).to.equal(false);
+        });
+
         it('should default given name to null if the name only contains whitespace', function() {
           person.givenName = ' ';
           el.person = person;
 
           expect(el.person.givenName).to.equal(null);
+        });
+
+        it('should default name prefix name to null if not passed in', function () {
+          person.namePrefix = null;
+          el.person = person;
+
+          expect(el.person.namePrefix).to.equal(null);
         });
 
         it('should add the lang to the name if it doesn\'t match current language', function() {
@@ -199,6 +230,22 @@
           expect(imageEl).to.not.exist;
           expect(sexEl.textContent).to.equal(FS.i18n('fs.shared.fsPerson.' + person.sex.toUpperCase()));
           expect(givenNameEl.textContent).to.equal(person.givenName);
+          expect(familyNameEl.textContent).to.equal(person.familyName);
+          expect(fullNameEl.textContent).to.equal(person.name);
+          expect(lifespanEl.textContent).to.equal(person.lifespan);
+          expect(idEl.textContent).to.equal(person.id);
+        });
+
+        it('should display all passed in data via a JSON.stringified person attribute when in portrait and givenname is null', function () {
+          person.givenName = null;
+          el.setAttribute('person', JSON.stringify(person));
+          el.setAttribute('orientation', 'portrait');
+          updateSelectors();
+
+          expect(portraitEl).to.exist;
+          expect(imageEl).to.exist;
+          expect(sexEl.textContent).to.equal(FS.i18n('fs.shared.fsPerson.' + person.sex.toUpperCase()));
+          expect(givenNameEl.textContent).to.equal(person.namePrefix);
           expect(familyNameEl.textContent).to.equal(person.familyName);
           expect(fullNameEl.textContent).to.equal(person.name);
           expect(lifespanEl.textContent).to.equal(person.lifespan);
@@ -398,7 +445,7 @@
         it('should add the nameSystem class if passed in', function() {
           setPerson();
 
-          expect(nameSystemClassEl.classList.contains('fs-person__name--eruotipic')).to.be.true;
+          expect(nameSystemClassEl.classList.contains('fs-person__name--eurotipic')).to.be.true;
         });
 
         it('should not add the nameSystem if not passed in', function() {
@@ -406,7 +453,7 @@
 
           setPerson();
 
-          expect(nameSystemClassEl.classList.contains('fs-person__name--eruotipic')).to.be.false;
+          expect(nameSystemClassEl.classList.contains('fs-person__name--eurotipic')).to.be.false;
         });
 
         it('should add the lifespan to the data-lifespan attribute of the lifespan element', function() {

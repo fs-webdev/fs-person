@@ -216,7 +216,7 @@
 
     /** PORTRAIT **/
     /*
-     * 1. sinotypic names will still use the full name instead of the given-name and family-name
+     * 1. In portrait mode for sinotypic names, we use name parts
      */
     fs-person[orientation="portrait"] {
       display: block;
@@ -231,6 +231,10 @@
     fs-person[orientation="portrait"] .fs-person__name.fs-person__name--sinotypic {
       display: flex;
       flex-direction: column-reverse;
+    }
+
+    fs-person[orientation="portrait"] .fs-person__name.fs-person__name--sinotypic.fs-person__name--display-in-eurotypic-order{
+      flex-direction: column;
     }
 
     fs-person[orientation="portrait"] .fs-person__sex,
@@ -438,6 +442,7 @@
   *  - `name` - Full name of the person. Defaults to `[Unknown Name]`.
   *  - `givenName` - Given name of the person. Defaults to `[Unknown Name]`.
   *  - `familyName` - Family name of the person.
+  *  - `namePrefix` - Name prefix of the person.
   *  - `sex` - Sex of the person (lowercase or uppercase). Defaults to `unknown`.
   *  - `lifespan` - Lifespan of the person.
   *  - `id` - Person Id of the person
@@ -511,6 +516,10 @@
 
             this._person.givenName = (this.person.givenName && this.person.givenName.trim() ?
               this.person.givenName.trim()
+              : null);
+
+            this._person.namePrefix = (this.person.namePrefix && this.person.namePrefix.trim() ?
+              this.person.namePrefix.trim()
               : null);
 
             // set the given name to unknown name for portrait orientation
@@ -632,9 +641,24 @@
          nameEl.setAttribute('lang', this.person.lang);
        }
 
+       // When there is no givenName, and they have a name prefix, we assign
+       // prefix to givenName similar to fanchart using namePart1.
+       if ((!this.person.givenName || this.person.givenName === '') && this.person.namePrefix && orientationAttr === "portrait") {
+         this.person.givenName = this.person.namePrefix;
+
+         // If the name is sinotypic we also set a flag indicating
+         // we should display a sinotypic name in eurotypic order.
+         this.person.displayInEurotypicOrder = this.person.nameSystem === 'sinotypic';
+       }
+
        // name system
        if (this.person.nameSystem) {
          nameEl.classList.add('fs-person__name--' + this.person.nameSystem);
+       }
+
+       // when there is no givenName in sinotypic order, name is displayed in eurotypic order
+       if (this.person.displayInEurotypicOrder) {
+         nameEl.classList.add('fs-person__name--display-in-eurotypic-order');
        }
 
        // Some languages always have their names displayed on a single line even in portrait mode
