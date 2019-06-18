@@ -15,7 +15,7 @@
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^3.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
-    "web-component-tester": "t2ym/web-component-tester#6.0.0-wct6-plugin.1",
+    "web-component-tester": "Polymer/web-component-tester#6.x.x",
     "axe.min": "https://unpkg.com/axe-core/axe.min.js"
   },
   "ignore": [

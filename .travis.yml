@@ -7,7 +7,7 @@ branches:
     - master
 language: node_js
 node_js:
-  - '6'
+  - '10'
 cache:
   directories: null
   # - bower_components # disabled, due to an increase in delayed breakages
