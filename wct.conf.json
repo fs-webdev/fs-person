@@ -24,7 +24,7 @@
         }
       ]
     },
-    "istanbul": {
+    "istanbub": {
       "dir": "./coverage",
       "reporters": ["text", "text-summary", "lcov"],
       "include": [
