@@ -128,19 +128,19 @@
           expect(el.person.givenName, 'givenName was not also set to "[Unknown Name]"').to.equal('[Unknown Name]');
         });
 
-        it('should default given name to null if not passed in', function() {
+        it('should default givenName to namePrefix if no givenName but has namePrefix', function() {
           person.givenName = null;
-          el.person = person;
-
-          expect(el.person.givenName).to.equal(null);
-        });
-
-        it('should set givenName to namePrefix in portrait mode if no givenName', function () {
-          person.givenName = null;
-          el.setAttribute('orientation', 'portrait');
           el.person = person;
 
           expect(el.person.givenName).to.equal(person.namePrefix);
+        });
+
+        it('should default givenName to null if no namePrefix and no givenName', function () {
+          person.givenName = null;
+          person.namePrefix = null;
+          el.person = person;
+
+          expect(el.person.givenName).to.equal(null);
         });
 
         it('should set displayInEurotypicOrder if in sinotypic mode, portrait mode and no givenName', function () {
@@ -160,11 +160,11 @@
           expect(el.person.displayInEurotypicOrder).to.equal(false);
         });
 
-        it('should default given name to null if the name only contains whitespace', function() {
+        it('should default giveName to namePrefix if the giveName only contains whitespace', function() {
           person.givenName = ' ';
           el.person = person;
 
-          expect(el.person.givenName).to.equal(null);
+          expect(el.person.givenName).to.equal(person.namePrefix);
         });
 
         it('should default name prefix name to null if not passed in', function () {

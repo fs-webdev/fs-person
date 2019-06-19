@@ -526,6 +526,16 @@
               FS.i18n('fs.shared.fsPerson.UNKNOWN_NAME') :
               this.person.givenName);
 
+            // When there is no givenName, and they have a name prefix, we assign
+            // prefix to givenName similar to fanchart using namePart1.
+            if (!this.person.givenName && this.person.namePrefix) {
+              this.person.givenName = this.person.namePrefix;
+
+              // If the name is sinotypic we also set a flag indicating
+              // we should display a sinotypic name in eurotypic order.
+              this.person.displayInEurotypicOrder = this.person.nameSystem === 'sinotypic';
+            }
+
             this._render();
           }
         }
@@ -635,16 +645,6 @@
        // name lang attribute so screen readers know how to read the name
        if (this.person.lang && this.person.lang !== FS.simpleLocale()) {
          nameEl.setAttribute('lang', this.person.lang);
-       }
-
-       // When there is no givenName, and they have a name prefix, we assign
-       // prefix to givenName similar to fanchart using namePart1.
-       if (!this.person.givenName && this.person.namePrefix && orientationAttr === "portrait") {
-         this.person.givenName = this.person.namePrefix;
-
-         // If the name is sinotypic we also set a flag indicating
-         // we should display a sinotypic name in eurotypic order.
-         this.person.displayInEurotypicOrder = this.person.nameSystem === 'sinotypic';
        }
 
        // name system
