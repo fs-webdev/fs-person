@@ -228,13 +228,9 @@
     }
 
     /* [1] */
-    fs-person[orientation="portrait"] .fs-person__name.fs-person__name--sinotypic {
+    fs-person[orientation="portrait"] .fs-person__name.fs-person__name--sinotypic:not(.fs-person__name--display-in-eurotypic-order) {
       display: flex;
       flex-direction: column-reverse;
-    }
-
-    fs-person[orientation="portrait"] .fs-person__name.fs-person__name--sinotypic.fs-person__name--display-in-eurotypic-order{
-      flex-direction: column;
     }
 
     fs-person[orientation="portrait"] .fs-person__sex,
@@ -643,7 +639,7 @@
 
        // When there is no givenName, and they have a name prefix, we assign
        // prefix to givenName similar to fanchart using namePart1.
-       if ((!this.person.givenName || this.person.givenName === '') && this.person.namePrefix && orientationAttr === "portrait") {
+       if (!this.person.givenName && this.person.namePrefix && orientationAttr === "portrait") {
          this.person.givenName = this.person.namePrefix;
 
          // If the name is sinotypic we also set a flag indicating
