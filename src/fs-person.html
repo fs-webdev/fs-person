@@ -529,11 +529,11 @@
             // When there is no givenName, and they have a name prefix, we assign
             // prefix to givenName similar to fanchart using namePart1.
             if (!this.person.givenName && this.person.namePrefix) {
-              this.person.givenName = this.person.namePrefix;
+              this._person.givenName = this.person.namePrefix;
 
               // If the name is sinotypic we also set a flag indicating
               // we should display a sinotypic name in eurotypic order.
-              this.person.displayInEurotypicOrder = this.person.nameSystem === 'sinotypic';
+              this._person.displayInEurotypicOrder = this.person.nameSystem === 'sinotypic';
             }
 
             this._render();
