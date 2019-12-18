@@ -1,0 +1,6 @@
+{
+  "fs.shared.fsPerson.FEMALE": "Nő",
+  "fs.shared.fsPerson.MALE": "Férfi",
+  "fs.shared.fsPerson.UNKNOWN": "Ismeretlen nem",
+  "fs.shared.fsPerson.UNKNOWN_NAME": "[Ismeretlen név]"
+}

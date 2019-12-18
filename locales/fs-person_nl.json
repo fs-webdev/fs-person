@@ -1,0 +1,6 @@
+{
+  "fs.shared.fsPerson.FEMALE": "Vrouw",
+  "fs.shared.fsPerson.MALE": "Man",
+  "fs.shared.fsPerson.UNKNOWN": "Geslacht onbekend",
+  "fs.shared.fsPerson.UNKNOWN_NAME": "[Onbekende naam]"
+}
