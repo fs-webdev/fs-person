@@ -1,0 +1,6 @@
+{
+  "fs.shared.fsPerson.FEMALE": "Femeie",
+  "fs.shared.fsPerson.MALE": "Bărbat",
+  "fs.shared.fsPerson.UNKNOWN": "Sexul nu este cunoscut",
+  "fs.shared.fsPerson.UNKNOWN_NAME": "[Nume necunoscut]"
+}
