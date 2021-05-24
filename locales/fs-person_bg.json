@@ -1,6 +1,6 @@
 {
   "fs.shared.fsPerson.FEMALE": "Жена",
-  "fs.shared.fsPerson.MALE": "мъжки",
+  "fs.shared.fsPerson.MALE": "Мъж",
   "fs.shared.fsPerson.UNKNOWN": "Неизвестен пол",
   "fs.shared.fsPerson.UNKNOWN_NAME": "(Неизвестно име)"
 }
