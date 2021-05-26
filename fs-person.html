@@ -335,7 +335,7 @@
         <span class="fs-person__family-name" data-test="family-name"></span>
         <span class="fs-person__full-name" data-test="full-name"></span>
       </div>
-      <div class="fs-person__details">
+      <div class="fs-person__details LOOK">
         <span class="fs-person__lifespan" data-test="lifespan"><span aria-hidden="true"></span></span>
         <span class="fs-person__separator">&nbsp;•&nbsp;</span>
         <span class="fs-person__id" data-test="pid"></span>
@@ -705,11 +705,15 @@
 
        // id
        if ((this.person.id || this.person.personId) && !noIdAttr) {
+         var displayPid = this.person_id || this.person.personId;
+         if (displayPid.indexOf(':') !== -1) {
+           displayPid = displayPid.substring(displayPid.lastIndexOf(':') + 1);
+         }
         if (this._pidSlot) {
-           this._pidSlot.textContent = this.person.personId || this.person.id;
+           this._pidSlot.textContent = displayPid;
            idEl.appendChild(this._pidSlot);
          } else {
-           idEl.textContent = this.person.personId || this.person.id;
+           idEl.textContent = displayPid;
          }
        }
        else {
