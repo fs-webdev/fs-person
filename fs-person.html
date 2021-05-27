@@ -705,7 +705,7 @@
 
        // id
        if ((this.person.id || this.person.personId) && !noIdAttr) {
-         var displayPid = this.person_id || this.person.personId;
+         var displayPid = this.person.id || this.person.personId;
          if (displayPid.indexOf(':') !== -1) {
            displayPid = displayPid.substring(displayPid.lastIndexOf(':') + 1);
          }
